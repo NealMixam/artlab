@@ -1,8 +1,9 @@
 <?php get_header(); ?>
+<?php get_sidebar(); ?>
 
 <div class="products-archive">
 
-    <h1 class="products-title">Каталог товаров</h1>
+    <h1 class="products-title">Каталог покрытий</h1>
 
     <div class="products-layout">
         <aside class="products-filters">

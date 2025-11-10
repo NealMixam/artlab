@@ -112,13 +112,15 @@ function filter_coatings_ajax(){
 }
 
 function theme_enqueue_product_gallery() {
+    wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+    wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
     wp_enqueue_style('lightgallery-css', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css');
     wp_enqueue_script('lightgallery-js', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.umd.min.js', array('jquery'), null, true);
     wp_enqueue_script('lightgallery-zoom', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.umd.js', array('lightgallery-js'), null, true);
 
     wp_enqueue_script('threesixty-js', get_stylesheet_directory_uri() . '/js/threesixty.js', array('jquery'), null, true);
 
-    wp_enqueue_script('product-360-init', get_stylesheet_directory_uri() . '/js/product-360.js', array('lightgallery-js','threesixty-js'), null, true);
+    wp_enqueue_script('single-product-init', get_stylesheet_directory_uri() . '/js/single-product.js', array('lightgallery-js','threesixty-js'), null, true);
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_product_gallery');
 
@@ -240,5 +242,253 @@ add_action('init', 'create_gallery_post_type');
 
 add_theme_support('post-thumbnails');
 
+// === Настройки секции "О нас" ===
+function about_section_settings_init() {
+    add_settings_section(
+            'about_section',
+            'Секция "О нас"',
+            '__return_false',
+            'reading'
+    );
+
+    add_settings_field(
+            'about_text',
+            'Текст "О нас"',
+            'about_text_render',
+            'reading',
+            'about_section'
+    );
+    register_setting('reading', 'about_text', ['sanitize_callback' => 'wp_kses_post']);
+
+    add_settings_field(
+            'about_images',
+            'Изображения "О нас"',
+            'about_images_render',
+            'reading',
+            'about_section'
+    );
+    register_setting('reading', 'about_images', ['sanitize_callback' => 'sanitize_text_field']);
+}
+add_action('admin_init', 'about_section_settings_init');
+
+function about_text_render() {
+    $text = get_option('about_text', '');
+    wp_editor($text, 'about_text', [
+            'textarea_name' => 'about_text',
+            'textarea_rows' => 8,
+            'media_buttons' => true,
+    ]);
+}
+
+function about_images_render() {
+    $images = get_option('about_images', '');
+    ?>
+    <div id="about-images-wrapper">
+        <input type="hidden" name="about_images" id="about_images" value="<?php echo esc_attr($images); ?>">
+        <button type="button" class="button" id="upload-about-images">Выбрать изображения</button>
+        <div id="about-images-preview" style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+            <?php
+            if (!empty($images)) {
+                $ids = explode(',', $images);
+                foreach ($ids as $id) {
+                    $src = wp_get_attachment_image_src($id, 'thumbnail')[0];
+                    echo '<img src="' . esc_url($src) . '" style="width:80px;height:auto;border:1px solid #ccc;">';
+                }
+            }
+            ?>
+        </div>
+    </div>
+
+    <script>
+        jQuery(document).ready(function($){
+            var frame;
+            $('#upload-about-images').on('click', function(e){
+                e.preventDefault();
+                if (frame) { frame.open(); return; }
+
+                frame = wp.media({
+                    title: 'Выберите изображения для секции "О нас"',
+                    button: { text: 'Добавить' },
+                    multiple: true
+                });
+
+                frame.on('select', function(){
+                    var selection = frame.state().get('selection');
+                    var ids = [];
+                    var preview = $('#about-images-preview');
+                    preview.empty();
+                    selection.each(function(attachment){
+                        ids.push(attachment.id);
+                        preview.append('<img src="'+attachment.attributes.sizes.thumbnail.url+'" style="width:80px;height:auto;border:1px solid #ccc;">');
+                    });
+                    $('#about_images').val(ids.join(','));
+                });
+
+                frame.open();
+            });
+        });
+    </script>
+    <?php
+}
+
+function handle_contact_form_submission() {
+    if (isset($_POST['contact_submitted'])) {
+        $name = sanitize_text_field($_POST['name']);
+        $email = sanitize_email($_POST['email']);
+        $phone = sanitize_text_field($_POST['phone']);
+        $message = sanitize_textarea_field($_POST['message']);
+
+        $to = 'info@decorpaint.ge';
+        $subject = 'Новое сообщение с сайта';
+        $body = "Имя: $name\nEmail: $email\nТелефон: $phone\n\nСообщение:\n$message";
+        $headers = ['Content-Type: text/plain; charset=UTF-8', "Reply-To: $email"];
+
+        wp_mail($to, $subject, $body, $headers);
+    }
+}
+add_action('init', 'handle_contact_form_submission');
+
+// === Галерея изображений продукта ===
+function add_product_gallery_metabox() {
+    add_meta_box(
+            'product_gallery_images',
+            'Галерея изображений товара',
+            'render_product_gallery_metabox',
+            'products',
+            'normal',
+            'default'
+    );
+}
+add_action('add_meta_boxes', 'add_product_gallery_metabox');
+
+function render_product_gallery_metabox($post) {
+    $images = get_post_meta($post->ID, '_product_gallery_images', true);
+    ?>
+    <div id="product-gallery-wrapper">
+        <p>Выберите изображения, которые будут отображаться в галерее товара.</p>
+        <ul id="product-gallery-list">
+            <?php
+            if (!empty($images)) {
+                foreach ($images as $img_id) {
+                    $img_url = wp_get_attachment_image_url($img_id, 'thumbnail');
+                    echo '<li><img src="' . esc_url($img_url) . '" style="max-width:80px;"><input type="hidden" name="product_gallery_images[]" value="' . esc_attr($img_id) . '"></li>';
+                }
+            }
+            ?>
+        </ul>
+        <button type="button" class="button" id="upload-product-gallery">Добавить изображения</button>
+    </div>
+
+    <script>
+        jQuery(document).ready(function($) {
+            var frame;
+            $('#upload-product-gallery').on('click', function(e) {
+                e.preventDefault();
+                if (frame) { frame.open(); return; }
+
+                frame = wp.media({
+                    title: 'Выберите изображения для галереи',
+                    button: { text: 'Добавить' },
+                    multiple: true
+                });
+
+                frame.on('select', function() {
+                    var attachments = frame.state().get('selection').toJSON();
+                    var list = $('#product-gallery-list');
+                    list.empty();
+                    attachments.forEach(function(attachment) {
+                        list.append(
+                            '<li><img src="' + attachment.url + '" style="max-width:80px;"><input type="hidden" name="product_gallery_images[]" value="' + attachment.id + '"></li>'
+                        );
+                    });
+                });
+
+                frame.open();
+            });
+        });
+    </script>
+    <style>
+        #product-gallery-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+        #product-gallery-list li { list-style:none; }
+    </style>
+    <?php
+}
+
+function save_product_gallery_metabox($post_id) {
+    if (isset($_POST['product_gallery_images'])) {
+        $images = array_map('intval', $_POST['product_gallery_images']);
+        update_post_meta($post_id, '_product_gallery_images', $images);
+    } else {
+        delete_post_meta($post_id, '_product_gallery_images');
+    }
+}
+add_action('save_post', 'save_product_gallery_metabox');
+
+function mytheme_enqueue_scripts() {
+    $script_path = get_stylesheet_directory() . '/js/sidebar-toggle.js';
+    wp_enqueue_script(
+            'sidebar-toggle',
+            get_stylesheet_directory_uri() . '/js/sidebar-toggle.js',
+            array(),
+            file_exists($script_path) ? filemtime($script_path) : false,
+            true
+    );
+}
+add_action('wp_enqueue_scripts', 'mytheme_enqueue_scripts');
+
+// === Добавляем ссылку "Копировать" в список записей ===
+add_filter('post_row_actions', function($actions, $post) {
+    if ($post->post_type === 'products') {
+        $actions['duplicate'] = '<a href="' . wp_nonce_url(
+                        admin_url('admin.php?action=duplicate_product&post=' . $post->ID),
+                        'duplicate_product_' . $post->ID
+                ) . '" title="Сделать копию этого товара">Копировать</a>';
+    }
+    return $actions;
+}, 10, 2);
+
+// === Логика копирования записи ===
+add_action('admin_action_duplicate_product', function() {
+    if (empty($_GET['post'])) {
+        wp_die('Нет ID записи для копирования.');
+    }
+
+    $post_id = intval($_GET['post']);
+    check_admin_referer('duplicate_product_' . $post_id);
+
+    $post = get_post($post_id);
+    if (!$post) {
+        wp_die('Запись не найдена.');
+    }
+
+    $new_post = [
+            'post_title'   => $post->post_title . ' (копия)',
+            'post_content' => $post->post_content,
+            'post_status'  => 'draft',
+            'post_type'    => $post->post_type,
+            'post_author'  => get_current_user_id(),
+    ];
+
+    $new_post_id = wp_insert_post($new_post);
+
+    // Копируем метаданные
+    $meta = get_post_meta($post_id);
+    foreach ($meta as $key => $values) {
+        foreach ($values as $value) {
+            update_post_meta($new_post_id, $key, maybe_unserialize($value));
+        }
+    }
+
+    // Копируем термины (категории, метки и т.п.)
+    $taxonomies = get_object_taxonomies($post->post_type);
+    foreach ($taxonomies as $taxonomy) {
+        $terms = wp_get_object_terms($post_id, $taxonomy, ['fields' => 'ids']);
+        wp_set_object_terms($new_post_id, $terms, $taxonomy);
+    }
+
+    // Перенаправляем на экран редактирования новой записи
+    wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
+    exit;
+});
 
 

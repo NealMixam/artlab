@@ -1,86 +1,95 @@
 <?php get_header(); ?>
+<?php get_sidebar(); ?>
 
-<?php if(have_posts()): while(have_posts()): the_post(); ?>
+<?php if (have_posts()): while (have_posts()): the_post(); ?>
 
-    <div class="single-product" style="max-width:1200px;margin:40px auto;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start;">
+    <?php
+    // === GALLERY ===
+    $gallery_ids = get_post_meta(get_the_ID(), '_product_gallery_images', true);
+    $gallery_urls = [];
 
-        <div class="product-gallery">
-            <div class="gallery-grid">
-                <?php
-                // Получаем все изображения, прикреплённые к продукту
-                $images = get_attached_media('image', get_the_ID());
-                if ($images && count($images) > 0):
-                    $images = array_values($images);
-                    foreach($images as $img):
-                        $url_large = wp_get_attachment_image_url($img->ID, 'large');
-                        $url_medium = wp_get_attachment_image_url($img->ID, 'medium');
-                        ?>
-                        <a href="<?php echo esc_url($url_large); ?>" class="gallery-item">
-                            <img src="<?php echo esc_url($url_medium); ?>" alt="<?php the_title(); ?>" />
-                        </a>
-                    <?php endforeach; endif; ?>
+    if (!empty($gallery_ids) && is_array($gallery_ids)) {
+        foreach ($gallery_ids as $img_id) {
+            $url = wp_get_attachment_url($img_id);
+            if ($url) $gallery_urls[] = $url;
+        }
+    }
 
-                <?php
-                // Получаем 360° изображения из метаполя
-                $images_360_ids = get_post_meta(get_the_ID(), '_product_360_images', true);
-                $images_360_urls = [];
+    // === 360° ===
+    $images_360_ids = get_post_meta(get_the_ID(), '_product_360_images', true);
+    $images_360_urls = [];
 
-                if (!empty($images_360_ids) && is_array($images_360_ids)) {
-                    foreach ($images_360_ids as $img_id) {
-                        $url = wp_get_attachment_url($img_id);
-                        if ($url) $images_360_urls[] = $url;
-                    }
-                }
+    if (!empty($images_360_ids) && is_array($images_360_ids)) {
+        foreach ($images_360_ids as $img_id) {
+            $url = wp_get_attachment_url($img_id);
+            if ($url) $images_360_urls[] = $url;
+        }
+    }
+    ?>
 
-                // Если есть хотя бы 2 изображения для 360°
-                if (count($images_360_urls) > 1): ?>
-                    <a href="#" class="gallery-item" data-lg-custom-html="#product-360-wrapper">
-                        <img src="<?php echo esc_url($images_360_urls[0]); ?>" alt="360° <?php the_title(); ?>" />
-                    </a>
+    <div class="single-product">
+
+        <div id="modal-360" class="modal-360">
+            <div class="modal-360-content">
+                <button class="modal-360-close">&times;</button>
+                <div id="modal-360-viewer">
+                    <?php if (count($images_360_urls) > 1): ?>
+                        <div id="product-360-wrapper" class="product-360-trigger" style="margin-bottom:20px;">
+                            <div id="product-360"></div>
+                            <button id="play-pause-360" class="btn-play-pause">▶️ Play</button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-container">
+            <div class="product-gallery">
+                <button id="open-360" class="btn-360">360°</button>
+                <?php if (!empty($gallery_urls)): ?>
+                    <div class="swiper main-slider">
+                        <div class="swiper-wrapper">
+                            <?php foreach ($gallery_urls as $img_url): ?>
+                                <div class="swiper-slide">
+                                    <a href="<?php echo esc_url($img_url); ?>" class="gallery-item">
+                                        <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title(); ?>">
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="swiper thumbs-slider">
+                        <div class="swiper-wrapper">
+                            <?php foreach ($gallery_urls as $img_url): ?>
+                                <div class="swiper-slide">
+                                    <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title(); ?>">
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
-        <div id="product-360-wrapper" style="display:none;">
-            <div id="product-360" style="width:600px;height:600px;"></div>
-        </div>
 
         <div class="product-info">
             <h1><?php the_title(); ?></h1>
             <div class="product-content"><?php the_content(); ?></div>
+
             <div class="product-meta">
-                <p><strong>Бренд:</strong> <?php echo get_the_term_list(get_the_ID(),'product_brand','',', '); ?></p>
-                <p><strong>Характеристика покрытия:</strong> <?php echo get_the_term_list(get_the_ID(),'product_finish','',', '); ?></p>
-                <p><strong>Стиль интерьера:</strong> <?php echo get_the_term_list(get_the_ID(),'product_style','',', '); ?></p>
-                <p><strong>Сложность нанесения:</strong> <?php echo get_the_term_list(get_the_ID(),'product_application','',', '); ?></p>
+                <p><strong>Бренд:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_brand', '', ', '); ?></p>
+                <p><strong>Характеристика покрытия:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_finish', '', ', '); ?></p>
+                <p><strong>Стиль интерьера:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_style', '', ', '); ?></p>
+                <p><strong>Сложность нанесения:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_application', '', ', '); ?></p>
             </div>
+
             <a href="/products/" class="btn-back">← Вернуться в каталог</a>
         </div>
-
     </div>
-    <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/threesixty.js"></script>
 
-    <!-- Передаем массив 360° изображений в JS -->
     <script>
-        const images360 = <?php echo json_encode($images_360_urls); ?>;
-        console.log('images360:', images360);
-
-        if (images360.length > 1) {
-            const elem = document.getElementById('product-360');
-            if (elem) {
-                const wrapper = document.getElementById('product-360-wrapper');
-                wrapper.style.display = 'block';
-
-                new ThreeSixty(elem, {
-                    image: images360,
-                    width: 600,
-                    height: 600,
-                    drag: true
-                });
-            }
-        } else {
-            console.log('Недостаточно изображений для 360° просмотра');
-        }
+        window.product360Images = <?php echo json_encode($images_360_urls); ?>;
     </script>
 
 <?php endwhile; endif; ?>

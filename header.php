@@ -11,27 +11,40 @@
     <div class="container header-inner">
         <div class="site-branding">
             <a href="<?php echo esc_url(home_url('/')); ?>" class="site-title">
-                <img src="<?php echo get_stylesheet_directory_uri() . '/assets/images/logo.png'; ?>" alt="Logo" width="200px" height="70px"/>
+                <img src="<?php echo get_stylesheet_directory_uri() . '/assets/images/logo.png'; ?>" alt="Logo" width="200" height="70"/>
             </a>
-            <p class="site-description"><?php bloginfo('description'); ?></p>
         </div>
-        <div class="site-contacts">
-            <a href="tel:+79258647733">+7(925)-864-77-33</a>
+        <div class="site-contacts desktop-only">
+            <a href="tel:+79255401177">+7(925) 540-11-77</a>
         </div>
 
-<!--        <nav class="main-nav">-->
-<!--            --><?php
-//            wp_nav_menu([
-//                'theme_location' => 'primary',
-//                'container'      => false,
-//                'menu_class'     => 'main-menu',
-//            ]);
-//            ?>
-<!--        </nav>-->
+        <button class="burger-menu" aria-label="Открыть меню">
+            <span class="burger-bar"></span>
+            <span class="burger-bar"></span>
+            <span class="burger-bar"></span>
+        </button>
+
+        <nav class="mobile-menu">
+            <?php
+            if ( has_nav_menu('sidebar-menu') ) {
+                wp_nav_menu([
+                        'theme_location' => 'sidebar-menu',
+                        'container' => false,
+                        'menu_class' => 'mobile-menu-list',
+                ]);
+            } else {
+                echo '<p>Меню пока не назначено.</p>';
+            }
+            ?>
+            <div class="mobile-contacts mobile-only">
+                <a href="tel:+79255401177">+7 (925) 540-11-77</a>
+            </div>
+        </nav>
     </div>
 </header>
 
-<main class="site-content">
-    <div class="container <?php echo (is_post_type_archive(['products', 'coatings'])) ? '' : 'layout'; ?>">
+
+<main class="site-content site-main">
+    <div class="container layout">
 
 
