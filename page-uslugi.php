@@ -4,8 +4,8 @@ get_header();
 ?>
 <?php get_sidebar(); ?>
 
-<section class="about-page">
-    <div class="container">
+<section class="services-page">
+    <div>
         <?php
         if ( have_posts() ) :
             while ( have_posts() ) : the_post(); ?>

@@ -5,7 +5,7 @@ get_header();
 <?php get_sidebar(); ?>
 
 <section class="about-page">
-    <div class="container">
+    <div>
         <?php
         if ( have_posts() ) :
             while ( have_posts() ) : the_post(); ?>

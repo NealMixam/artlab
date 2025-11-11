@@ -1,5 +1,4 @@
 jQuery(function($){
-    // Применение фильтров
     $('#product-filters').on('submit', function(e){
         e.preventDefault();
         $('#products-grid').html('<div class="loading">Загрузка...</div>');
@@ -11,7 +10,6 @@ jQuery(function($){
         });
     });
 
-    // Сброс фильтров
     $('.reset-filters').on('click', function(){
         $('#product-filters')[0].reset();
         $('#product-filters').submit();

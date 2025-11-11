@@ -4,6 +4,9 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php wp_head(); ?>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body <?php body_class(); ?>>
 
@@ -15,7 +18,11 @@
             </a>
         </div>
         <div class="site-contacts desktop-only">
-            <a href="tel:+79255401177">+7(925) 540-11-77</a>
+            <a class="btn-phone" href="tel:+79255401177">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.1 8.81 19.79 19.79 0 0 1 .03.18 2 2 0 0 1 2 0h3a2 2 0 0 1 2 1.72c.12.83.37 1.64.72 2.4a2 2 0 0 1-.45 2.18l-1.27 1.27a16 16 0 0 0 6.88 6.88l1.27-1.27a2 2 0 0 1 2.18-.45c.76.35 1.57.6 2.4.72A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                +7(925) 540-11-77</a>
         </div>
 
         <button class="burger-menu" aria-label="Открыть меню">

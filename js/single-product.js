@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getViewerSize = () => window.innerWidth < 768 ? { width: 300, height: 300 } : { width: 600, height: 600 };
 
-    // 1️⃣ Предзагрузка всех изображений
     const preloadImages = (images) => {
         return Promise.all(images.map(src => new Promise((resolve, reject) => {
             const img = new Image();
@@ -21,17 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })));
     };
 
-    // 2️⃣ Открытие модалки
     const openModal = async () => {
         if (!modal) return;
         modal.classList.add('active');
 
         if (!images360.length) return;
 
-        // Ждём загрузки всех изображений
         await preloadImages(images360);
 
-        // Если экземпляр уже есть — уничтожаем
         if (modalThreeSixty && typeof modalThreeSixty.destroy === 'function') {
             modalThreeSixty.destroy();
             modalThreeSixty = null;
