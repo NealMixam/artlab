@@ -72,14 +72,14 @@
     </section>
 
     <section class="home-section contact-section">
-        <div class="container contact-inner">
+        <div class="contact-inner">
             <div class="contact-info">
                 <h2 class="section-title">Связаться с нами</h2>
                 <p>Если у вас есть вопросы по продукции или вы хотите получить консультацию — оставьте сообщение, и мы свяжемся с вами в ближайшее время.</p>
                 <ul class="contact-details">
-                    <li><strong>Телефон:</strong> <a href="tel:+79252401177">+7(925) 240-11-77</a></li>
+                    <li><strong>Телефон:</strong> <a href="tel:+79255401177">+7(925) 540-11-77</a></li>
                     <li><strong>Email:</strong> <a href="mailto:Artlabtasso@gmail.com">Artlabtasso@gmail.com</a></li>
-                    <li><strong>Адрес:</strong> г. Москва</li>
+                    <li><strong>Адрес:</strong> г. Москва, ул. Куусинена, 11, к. 3</li>
                 </ul>
             </div>
 
