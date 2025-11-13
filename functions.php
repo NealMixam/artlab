@@ -242,6 +242,43 @@ add_action('init', 'create_gallery_post_type');
 
 add_theme_support('post-thumbnails');
 
+// === Цена товара ===
+function add_product_price_metabox() {
+    add_meta_box(
+            'product_price_metabox',
+            'Цена товара',
+            'render_product_price_metabox',
+            'products',
+            'side', // боковая колонка
+            'default'
+    );
+}
+add_action('add_meta_boxes', 'add_product_price_metabox');
+
+function render_product_price_metabox($post) {
+    $price = get_post_meta($post->ID, '_product_price', true);
+    ?>
+    <label for="product_price">Введите цену (в ₽):</label>
+    <input
+            type="number"
+            name="product_price"
+            id="product_price"
+            value="<?php echo esc_attr($price); ?>"
+            step="0.01"
+            min="0"
+            style="width:100%;margin-top:8px;"
+    />
+    <?php
+}
+
+function save_product_price_metabox($post_id) {
+    if (isset($_POST['product_price'])) {
+        update_post_meta($post_id, '_product_price', floatval($_POST['product_price']));
+    }
+}
+add_action('save_post', 'save_product_price_metabox');
+
+
 // === Настройки секции "О нас" ===
 function about_section_settings_init() {
     add_settings_section(

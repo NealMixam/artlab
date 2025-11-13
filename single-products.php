@@ -74,9 +74,9 @@
 
 
         <div class="product-info">
+            <a href="/products/" class="btn-back">← Вернуться в каталог</a>
             <h1><?php the_title(); ?></h1>
             <div class="product-content"><?php the_content(); ?></div>
-
             <div class="product-meta">
                 <p><strong>Бренд:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_brand', '', ', '); ?></p>
                 <p><strong>Характеристика покрытия:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_finish', '', ', '); ?></p>
@@ -84,7 +84,12 @@
                 <p><strong>Сложность нанесения:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_application', '', ', '); ?></p>
             </div>
 
-            <a href="/products/" class="btn-back">← Вернуться в каталог</a>
+            <?php
+            $price = get_post_meta(get_the_ID(), '_product_price', true);
+            if ($price) :
+                ?>
+                <p class="product-price"><strong>Цена:</strong> <?php echo esc_html(number_format($price, 2, '.', ' ')); ?>  ₽</p>
+            <?php endif; ?>
         </div>
     </div>
 
