@@ -10,6 +10,7 @@
 </head>
 <body <?php body_class(); ?>>
 
+<div class="site-wrapper">
 <header class="site-header">
     <div class="container header-inner">
         <div class="site-branding">
@@ -50,8 +51,10 @@
     </div>
 </header>
 
+    <div class="main-container">
+        <?php get_sidebar(); ?>
 
-<main class="site-content site-main">
-    <div class="container layout">
+        <div class="content-wrapper">
+            <main class="site-main">
 
 

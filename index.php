@@ -1,9 +1,5 @@
 <?php get_header(); ?>
-<?php get_sidebar(); ?>
-
 <div class="homepage">
-
-    <!-- Блок товаров -->
     <section class="home-section">
         <h2 class="section-title">Популярные товары</h2>
         <div class="home-grid">
@@ -29,7 +25,7 @@
     </section>
 
     <section class="home-section about-section alt">
-        <div class="container about-inner">
+        <div class="about-inner">
             <div class="about-text">
                 <h2 class="section-title">О нас</h2>
                 <div class="about-content">
@@ -51,8 +47,6 @@
         </div>
     </section>
 
-
-    <!-- Блок галереи -->
     <section class="home-section">
         <h2 class="section-title">Галерея проектов</h2>
         <div class="home-grid gallery-grid">
@@ -122,8 +116,6 @@
             </div>
         </div>
     </section>
-
 </div>
-
 
 <?php get_footer(); ?>
