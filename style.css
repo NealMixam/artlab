@@ -162,6 +162,7 @@ a:hover {
 
 .site-main {
     flex: 1;
+    font-size: 18px;
     /*padding: 20px;*/
 }
 

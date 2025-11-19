@@ -25,6 +25,9 @@
             if ($url) $images_360_urls[] = $url;
         }
     }
+
+    $price = get_post_meta(get_the_ID(), '_product_price', true);
+    $work_price = get_post_meta(get_the_ID(), '_product_work_price', true);
     ?>
 
     <div class="single-product">
@@ -84,12 +87,15 @@
                 <p><strong>Сложность нанесения:</strong> <?php echo get_the_term_list(get_the_ID(), 'product_application', '', ', '); ?></p>
             </div>
 
-            <?php
-            $price = get_post_meta(get_the_ID(), '_product_price', true);
-            if ($price) :
-                ?>
-                <p class="product-price"><strong>Цена:</strong> <?php echo esc_html(number_format($price, 2, '.', ' ')); ?>  ₽</p>
-            <?php endif; ?>
+            <div class="product-prices">
+                <?php if ($price): ?>
+                    <p class="product-price"><strong>Цена товара:</strong> <?php echo esc_html(number_format($price, 2, '.', ' ')); ?> ₽</p>
+                <?php endif; ?>
+
+                <?php if ($work_price): ?>
+                    <p class="product-work-price"><strong>Цена за работу:</strong> <?php echo esc_html(number_format($work_price, 2, '.', ' ')); ?> ₽</p>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 

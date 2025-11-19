@@ -72,26 +72,75 @@ function filter_products_ajax(){
     if(!empty($_POST['product_application'])) $tax_query[] = ['taxonomy'=>'product_application','field'=>'slug','terms'=>$_POST['product_application']];
     if(count($tax_query)>1) $args['tax_query']=$tax_query;
 
-    // price
+    // price (основная цена товара)
     $meta_query=[];
     if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
         $meta_query[]=['key'=>'price','value'=>[floatval($_POST['min_price']),floatval($_POST['max_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
     }
     elseif(!empty($_POST['min_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['min_price']),'type'=>'NUMERIC','compare'=>'>='];
     elseif(!empty($_POST['max_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['max_price']),'type'=>'NUMERIC','compare'=>'<='];
-    if($meta_query) $args['meta_query']=$meta_query;
 
-    $query=new WP_Query($args);
+    // price for work (цена за работу)
+    if(!empty($_POST['min_work_price']) && !empty($_POST['max_work_price'])){
+        $meta_query[]=['key'=>'_product_work_price','value'=>[floatval($_POST['min_work_price']),floatval($_POST['max_work_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
+    }
+    elseif(!empty($_POST['min_work_price'])) $meta_query[]=['key'=>'_product_work_price','value'=>floatval($_POST['min_work_price']),'type'=>'NUMERIC','compare'=>'>='];
+    elseif(!empty($_POST['max_work_price'])) $meta_query[]=['key'=>'_product_work_price','value'=>floatval($_POST['max_work_price']),'type'=>'NUMERIC','compare'=>'<='];
+
+    if($meta_query) {
+        if(count($meta_query) > 1) {
+            $meta_query['relation'] = 'AND';
+        }
+        $args['meta_query'] = $meta_query;
+    }
+
+    $query = new WP_Query($args);
     ob_start();
     if($query->have_posts()){
-        while($query->have_posts()){ $query->the_post();
+        while($query->have_posts()){
+            $query->the_post();
             get_template_part('template-parts/product','card');
         }
-    } else { echo '<p>Ничего не найдено</p>'; }
+    } else {
+        echo '<p>Ничего не найдено</p>';
+    }
     wp_reset_postdata();
 
     wp_send_json_success(['html'=>ob_get_clean()]);
 }
+// function filter_products_ajax(){
+//     check_ajax_referer('filters_nonce','nonce');
+//
+//     $args = ['post_type'=>'products','posts_per_page'=>12,'paged'=>$_POST['paged']??1];
+//
+//     $tax_query = ['relation'=>'AND'];
+//
+//     if(!empty($_POST['product_finish'])) $tax_query[] = ['taxonomy'=>'product_finish','field'=>'slug','terms'=>$_POST['product_finish']];
+//     if(!empty($_POST['product_style'])) $tax_query[] = ['taxonomy'=>'product_style','field'=>'slug','terms'=>$_POST['product_style']];
+//     if(!empty($_POST['product_brand'])) $tax_query[] = ['taxonomy'=>'product_brand','field'=>'slug','terms'=>$_POST['product_brand']];
+//     if(!empty($_POST['product_application'])) $tax_query[] = ['taxonomy'=>'product_application','field'=>'slug','terms'=>$_POST['product_application']];
+//     if(count($tax_query)>1) $args['tax_query']=$tax_query;
+//
+//     // price
+//     $meta_query=[];
+//     if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
+//         $meta_query[]=['key'=>'price','value'=>[floatval($_POST['min_price']),floatval($_POST['max_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
+//     }
+//     elseif(!empty($_POST['min_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['min_price']),'type'=>'NUMERIC','compare'=>'>='];
+//     elseif(!empty($_POST['max_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['max_price']),'type'=>'NUMERIC','compare'=>'<='];
+//     if($meta_query) $args['meta_query']=$meta_query;
+//
+//     $query=new WP_Query($args);
+//     ob_start();
+//     if($query->have_posts()){
+//         while($query->have_posts()){ $query->the_post();
+//             get_template_part('template-parts/product','card');
+//         }
+//     } else { echo '<p>Ничего не найдено</p>'; }
+//     wp_reset_postdata();
+//
+//     wp_send_json_success(['html'=>ob_get_clean()]);
+// }
 
 function filter_coatings_ajax(){
     check_ajax_referer('filters_nonce','nonce');
@@ -375,7 +424,7 @@ function handle_contact_form_submission() {
         $phone = sanitize_text_field($_POST['phone']);
         $message = sanitize_textarea_field($_POST['message']);
 
-        $to = 'info@decorpaint.ge';
+        $to = 'admin@artlabmsk.ru';
         $subject = 'Новое сообщение с сайта';
         $body = "Имя: $name\nEmail: $email\nТелефон: $phone\n\nСообщение:\n$message";
         $headers = ['Content-Type: text/plain; charset=UTF-8', "Reply-To: $email"];
@@ -527,5 +576,48 @@ add_action('admin_action_duplicate_product', function() {
     wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
     exit;
 });
+
+// === Цена за работу для товара ===
+function add_product_work_price_metabox() {
+    add_meta_box(
+        'product_work_price_metabox',
+        'Цена за работу',
+        'render_product_work_price_metabox',
+        'products',
+        'side',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'add_product_work_price_metabox');
+
+function render_product_work_price_metabox($post) {
+    $work_price = get_post_meta($post->ID, '_product_work_price', true);
+    ?>
+    <label for="product_work_price">Введите цену за работу (в ₽):</label>
+    <input
+        type="number"
+        name="product_work_price"
+        id="product_work_price"
+        value="<?php echo esc_attr($work_price); ?>"
+        step="0.01"
+        min="0"
+        style="width:100%;margin-top:8px;"
+        placeholder="0.00"
+    />
+    <p class="description">Стоимость работы по нанесению/установке товара</p>
+    <?php
+}
+
+function save_product_work_price_metabox($post_id) {
+    if (isset($_POST['product_work_price'])) {
+        $work_price = sanitize_text_field($_POST['product_work_price']);
+        if (!empty($work_price)) {
+            update_post_meta($post_id, '_product_work_price', floatval($work_price));
+        } else {
+            delete_post_meta($post_id, '_product_work_price');
+        }
+    }
+}
+add_action('save_post', 'save_product_work_price_metabox');
 
 

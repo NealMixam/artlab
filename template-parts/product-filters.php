@@ -1,6 +1,6 @@
 <form id="product-filters">
     <div class="filter-group">
-        <h3>Характеристика покрытия</h3>
+        <h3>Характеристики покрытий</h3>
         <?php
         $finishes = get_terms(['taxonomy'=>'product_finish','hide_empty'=>false]);
         foreach($finishes as $f){
