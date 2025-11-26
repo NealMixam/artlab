@@ -161,17 +161,33 @@ function filter_coatings_ajax(){
 }
 
 function theme_enqueue_product_gallery() {
-    wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
-    wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
+    // ВРЕМЕННО: подключаем на всех страницах для теста
     wp_enqueue_style('lightgallery-css', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css');
     wp_enqueue_script('lightgallery-js', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.umd.min.js', array('jquery'), null, true);
     wp_enqueue_script('lightgallery-zoom', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.umd.js', array('lightgallery-js'), null, true);
+    wp_enqueue_script('lightgallery-init', get_stylesheet_directory_uri() . '/js/lightgallery-init.js', array('lightgallery-js'), null, true);
 
-    wp_enqueue_script('threesixty-js', get_stylesheet_directory_uri() . '/js/threesixty.js', array('jquery'), null, true);
-
-    wp_enqueue_script('single-product-init', get_stylesheet_directory_uri() . '/js/single-product.js', array('lightgallery-js','threesixty-js'), null, true);
+    // Для товаров
+    if (is_singular('products')) {
+        wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+        wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
+        wp_enqueue_script('threesixty-js', get_stylesheet_directory_uri() . '/js/threesixty.js', array('jquery'), null, true);
+        wp_enqueue_script('single-product-init', get_stylesheet_directory_uri() . '/js/single-product.js', array('lightgallery-js','threesixty-js'), null, true);
+    }
 }
 add_action('wp_enqueue_scripts', 'theme_enqueue_product_gallery');
+// function theme_enqueue_product_gallery() {
+//     wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+//     wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
+//     wp_enqueue_style('lightgallery-css', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css');
+//     wp_enqueue_script('lightgallery-js', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.umd.min.js', array('jquery'), null, true);
+//     wp_enqueue_script('lightgallery-zoom', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.umd.js', array('lightgallery-js'), null, true);
+//
+//     wp_enqueue_script('threesixty-js', get_stylesheet_directory_uri() . '/js/threesixty.js', array('jquery'), null, true);
+//
+//     wp_enqueue_script('single-product-init', get_stylesheet_directory_uri() . '/js/single-product.js', array('lightgallery-js','threesixty-js'), null, true);
+// }
+// add_action('wp_enqueue_scripts', 'theme_enqueue_product_gallery');
 
 // === 360° Images Metabox ===
 function add_360_images_metabox() {

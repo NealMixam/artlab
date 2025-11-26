@@ -39,12 +39,23 @@ get_header();
                     // Получаем все <img> из контента
                     preg_match_all('/<img[^>]+>/i', $content, $images);
                     foreach ($images[0] as $img) {
-                        echo '<div class="gallery-img">' . $img . '</div>';
+                        // Извлекаем src из img тега
+                        preg_match('/src="([^"]+)"/i', $img, $src_match);
+                        if (!empty($src_match[1])) {
+                            $image_src = $src_match[1];
+                            // Получаем оригинальное изображение (убираем размеры из URL)
+                            $original_src = preg_replace('/-\d+x\d+\.(jpg|jpeg|png|gif)/i', '.$1', $image_src);
+
+                            echo '<div class="gallery-img">';
+                            echo '<a href="' . esc_url($original_src) . '" data-src="' . esc_url($original_src) . '">';
+                            echo $img;
+                            echo '</a>';
+                            echo '</div>';
+                        }
                     }
                     ?>
                 </div>
             </section>
-
 
         <?php endwhile;
         wp_reset_postdata();
@@ -53,6 +64,5 @@ get_header();
     endif;
     ?>
 </main>
-
 
 <?php get_footer(); ?>

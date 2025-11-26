@@ -8,4 +8,14 @@ jQuery(document).ready(function($){
             download: false
         });
     }
+
+    const galleryBlocks = document.querySelectorAll('.gallery-block');
+    galleryBlocks.forEach(function(galleryBlock) {
+        lightGallery(galleryBlock, {
+            selector: '.gallery-img a', 
+            plugins: [lgZoom],
+            zoom: true,
+            download: false
+        });
+    });
 });
