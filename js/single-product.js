@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const images360 = window.product360Images || [];
+    const sprite360 = window.product360Sprite || '';
+    const framesCount = window.product360Count || 0; // сколько кадров в спрайте
+    const framesPerRow = window.product360PerRow || 0; // сколько кадров в строке спрайта
+
     const modal = document.getElementById('modal-360');
     const modalClose = modal?.querySelector('.modal-360-close');
     const modalViewer = document.getElementById('product-360');
@@ -9,24 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let modalThreeSixty = null;
     let isPlaying = false;
 
-    const getViewerSize = () => window.innerWidth < 768 ? { width: 300, height: 300 } : { width: 600, height: 600 };
+    const getViewerSize = () =>
+        window.innerWidth < 768
+            ? { width: 300, height: 300 }
+            : { width: 600, height: 600 };
 
-    const preloadImages = (images) => {
-        return Promise.all(images.map(src => new Promise((resolve, reject) => {
+    const preloadImage = (src) =>
+        new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = resolve;
             img.onerror = reject;
             img.src = src;
-        })));
-    };
+        });
 
     const openModal = async () => {
-        if (!modal) return;
+        if (!modal || !sprite360) return;
+
         modal.classList.add('active');
-
-        if (!images360.length) return;
-
-        await preloadImages(images360);
+        await preloadImage(sprite360);
 
         if (modalThreeSixty && typeof modalThreeSixty.destroy === 'function') {
             modalThreeSixty.destroy();
@@ -37,18 +40,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const { width, height } = getViewerSize();
 
         modalThreeSixty = new ThreeSixty(modalViewer, {
-            image: images360,
+            image: sprite360,
             width,
             height,
-            speed: 100,
+            count: framesCount,
+            perRow: framesPerRow,
+            speed: 100
         });
     };
 
     const closeModal = () => {
         if (!modal) return;
-        if (modalThreeSixty && typeof modalThreeSixty.stop === 'function') modalThreeSixty.stop();
         modal.classList.remove('active');
         modalViewer.innerHTML = '';
+
+        if (modalThreeSixty && typeof modalThreeSixty.stop === 'function') {
+            modalThreeSixty.stop();
+        }
+
         modalThreeSixty = null;
         isPlaying = false;
         if (playPauseBtn) playPauseBtn.textContent = '▶️ Play';
@@ -56,15 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const togglePlayPause = () => {
         if (!modalThreeSixty) return;
+
         if (isPlaying) {
             modalThreeSixty.stop();
             playPauseBtn.textContent = '▶️ Play';
-            isPlaying = false;
         } else {
             modalThreeSixty.play();
             playPauseBtn.textContent = '⏸ Pause';
-            isPlaying = true;
         }
+        isPlaying = !isPlaying;
     };
 
     trigger?.addEventListener('click', openModal);
@@ -73,6 +82,82 @@ document.addEventListener('DOMContentLoaded', () => {
     modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal(); });
 });
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     const images360 = window.product360Images || [];
+//     const modal = document.getElementById('modal-360');
+//     const modalClose = modal?.querySelector('.modal-360-close');
+//     const modalViewer = document.getElementById('product-360');
+//     const trigger = document.getElementById('open-360');
+//     const playPauseBtn = document.getElementById('play-pause-360');
+//
+//     let modalThreeSixty = null;
+//     let isPlaying = false;
+//
+//     const getViewerSize = () => window.innerWidth < 768 ? { width: 300, height: 300 } : { width: 600, height: 600 };
+//
+//     const preloadImages = (images) => {
+//         return Promise.all(images.map(src => new Promise((resolve, reject) => {
+//             const img = new Image();
+//             img.onload = resolve;
+//             img.onerror = reject;
+//             img.src = src;
+//         })));
+//     };
+//
+//     const openModal = async () => {
+//         if (!modal) return;
+//         modal.classList.add('active');
+//
+//         if (!images360.length) return;
+//
+//         await preloadImages(images360);
+//
+//         if (modalThreeSixty && typeof modalThreeSixty.destroy === 'function') {
+//             modalThreeSixty.destroy();
+//             modalThreeSixty = null;
+//         }
+//
+//         modalViewer.innerHTML = '';
+//         const { width, height } = getViewerSize();
+//
+//         modalThreeSixty = new ThreeSixty(modalViewer, {
+//             image: images360,
+//             width,
+//             height,
+//             speed: 100,
+//         });
+//     };
+//
+//     const closeModal = () => {
+//         if (!modal) return;
+//         if (modalThreeSixty && typeof modalThreeSixty.stop === 'function') modalThreeSixty.stop();
+//         modal.classList.remove('active');
+//         modalViewer.innerHTML = '';
+//         modalThreeSixty = null;
+//         isPlaying = false;
+//         if (playPauseBtn) playPauseBtn.textContent = '▶️ Play';
+//     };
+//
+//     const togglePlayPause = () => {
+//         if (!modalThreeSixty) return;
+//         if (isPlaying) {
+//             modalThreeSixty.stop();
+//             playPauseBtn.textContent = '▶️ Play';
+//             isPlaying = false;
+//         } else {
+//             modalThreeSixty.play();
+//             playPauseBtn.textContent = '⏸ Pause';
+//             isPlaying = true;
+//         }
+//     };
+//
+//     trigger?.addEventListener('click', openModal);
+//     modalClose?.addEventListener('click', closeModal);
+//     playPauseBtn?.addEventListener('click', togglePlayPause);
+//     modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+//     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal(); });
+// });
 
 
 // document.addEventListener('DOMContentLoaded', () => {

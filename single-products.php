@@ -36,7 +36,7 @@
             <div class="modal-360-content">
                 <button class="modal-360-close">&times;</button>
                 <div id="modal-360-viewer">
-                    <?php if (count($images_360_urls) > 1): ?>
+                    <?php if (!empty($images_360_urls)): ?>
                         <div id="product-360-wrapper" class="product-360-trigger" style="margin-bottom:20px;">
                             <div id="product-360"></div>
                             <button id="play-pause-360" class="btn-play-pause">▶️ Play</button>
@@ -100,7 +100,9 @@
     </div>
 
     <script>
-        window.product360Images = <?php echo json_encode($images_360_urls); ?>;
+            window.product360Sprite = <?php echo json_encode($images_360_urls[0] ?? ''); ?>;
+            window.product360Count = 30;
+            window.product360PerRow = 5;
     </script>
 
 <?php endwhile; endif; ?>
