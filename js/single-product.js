@@ -1,42 +1,93 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     const sprite360 = window.product360Sprite || '';
-    const framesCount = window.product360Count || 0; // сколько кадров в спрайте
-    const framesPerRow = window.product360PerRow || 0; // сколько кадров в строке спрайта
+    const framesCount = window.product360Count || 0;
+    const framesPerRow = window.product360PerRow || 0;
 
     const modal = document.getElementById('modal-360');
     const modalClose = modal?.querySelector('.modal-360-close');
     const modalViewer = document.getElementById('product-360');
+    const modalWrapper = document.getElementById('product-360-wrapper');
     const trigger = document.getElementById('open-360');
+
     const playPauseBtn = document.getElementById('play-pause-360');
+    const zoomInBtn = document.getElementById('zoom-in-360');
+    const zoomOutBtn = document.getElementById('zoom-out-360');
+    const rotateLeftBtn = document.getElementById('rotate-left-360');
+    const rotateRightBtn = document.getElementById('rotate-right-360');
+
+    const controlsToggle = document.getElementById('controls-toggle-360');
+    const controlsMenu = document.getElementById('controls-menu-360');
+    const fullscreenBtn = document.getElementById('fullscreen-360');
 
     let modalThreeSixty = null;
-    let isPlaying = false;
 
-    const getViewerSize = () =>
-        window.innerWidth < 768
+    /* ================= STATE ================= */
+
+    let isPlaying = false;
+    let isZoomed = false;
+
+    const MAX_ZOOM_STEPS = 4;
+    let zoomStep = 0;
+    let zoomScale = 1;
+
+    let imgPosX = 0;
+    let imgPosY = 0;
+
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let isDragging = false;
+
+    /* ================= HELPERS ================= */
+
+    const getViewerSize = () => {
+        const fullscreen = modal.classList.contains('fullscreen');
+        if (fullscreen) {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        }
+
+        return window.innerWidth < 768
             ? { width: 300, height: 300 }
             : { width: 600, height: 600 };
+    };
 
-    const preloadImage = (src) =>
-        new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = resolve;
-            img.onerror = reject;
-            img.src = src;
-        });
+    const updatePlayButton = () => {
+        playPauseBtn.textContent = isPlaying ? '⏸' : '▶️';
+    };
 
-    const openModal = async () => {
+    const disableRotateControls = (disabled) => {
+        playPauseBtn.disabled = disabled;
+        rotateLeftBtn.disabled = disabled;
+        rotateRightBtn.disabled = disabled;
+    };
+
+    /* ================= AUTOPLAY ================= */
+
+    const startAutoplay = () => {
+        if (!modalThreeSixty || isZoomed) return;
+        modalThreeSixty.play();
+        isPlaying = true;
+        updatePlayButton();
+    };
+
+    const stopAutoplay = () => {
+        if (!modalThreeSixty) return;
+        modalThreeSixty.stop();
+        isPlaying = false;
+        updatePlayButton();
+    };
+
+    /* ================= MODAL ================= */
+
+    const openModal = () => {
         if (!modal || !sprite360) return;
 
         modal.classList.add('active');
-        await preloadImage(sprite360);
-
-        if (modalThreeSixty && typeof modalThreeSixty.destroy === 'function') {
-            modalThreeSixty.destroy();
-            modalThreeSixty = null;
-        }
-
         modalViewer.innerHTML = '';
+
         const { width, height } = getViewerSize();
 
         modalThreeSixty = new ThreeSixty(modalViewer, {
@@ -47,405 +98,213 @@ document.addEventListener('DOMContentLoaded', () => {
             perRow: framesPerRow,
             speed: 100
         });
+
+        resetZoom();
+        disableRotateControls(false);
+        startAutoplay();
     };
 
     const closeModal = () => {
-        if (!modal) return;
         modal.classList.remove('active');
+        modal.classList.remove('fullscreen');
         modalViewer.innerHTML = '';
 
-        if (modalThreeSixty && typeof modalThreeSixty.stop === 'function') {
-            modalThreeSixty.stop();
-        }
-
+        modalThreeSixty?.stop?.();
         modalThreeSixty = null;
+
         isPlaying = false;
-        if (playPauseBtn) playPauseBtn.textContent = '▶️ Play';
+        resetZoom();
+        updatePlayButton();
     };
+
+    const lockThreeSixtyHard = () => {
+        if (!modalThreeSixty || modalThreeSixty._locked) return;
+
+        modalThreeSixty._locked = true;
+
+        modalThreeSixty._next = modalThreeSixty.next;
+        modalThreeSixty._prev = modalThreeSixty.prev;
+        modalThreeSixty._play = modalThreeSixty.play;
+
+        modalThreeSixty.next = () => {};
+        modalThreeSixty.prev = () => {};
+        modalThreeSixty.play = () => {};
+
+        modalThreeSixty.stop();
+        isPlaying = false;
+        updatePlayButton();
+    };
+
+
+    const unlockThreeSixtyHard = () => {
+        if (!modalThreeSixty || !modalThreeSixty._locked) return;
+
+        modalThreeSixty.next = modalThreeSixty._next;
+        modalThreeSixty.prev = modalThreeSixty._prev;
+        modalThreeSixty.play = modalThreeSixty._play;
+
+        delete modalThreeSixty._next;
+        delete modalThreeSixty._prev;
+        delete modalThreeSixty._play;
+        delete modalThreeSixty._locked;
+    };
+
+    /* ================= PLAY / PAUSE ================= */
 
     const togglePlayPause = () => {
+        if (!modalThreeSixty || isZoomed) return;
+
+        isPlaying ? stopAutoplay() : startAutoplay();
+    };
+
+    /* ================= ROTATE ================= */
+
+    const rotateLeft = () => {
+        if (!modalThreeSixty || isZoomed) return;
+        stopAutoplay();
+        modalThreeSixty.prev();
+    };
+
+    const rotateRight = () => {
+        if (!modalThreeSixty || isZoomed) return;
+        stopAutoplay();
+        modalThreeSixty.next();
+    };
+
+    /* ================= ZOOM ================= */
+
+    const applyZoomTransform = () => {
+        modalViewer.style.transform =
+            `scale(${zoomScale}) translate(${imgPosX / zoomScale}px, ${imgPosY / zoomScale}px)`;
+    };
+
+    const enableZoom = () => {
+        isZoomed = true;
+        lockThreeSixtyHard();
+        disableRotateControls(true);
+
+        modalWrapper.classList.add('zoomed');
+        modalViewer.style.cursor = 'grab';
+
+        applyZoomTransform();
+    };
+
+    const resetZoom = () => {
+        isZoomed = false;
+        unlockThreeSixtyHard();
+        zoomStep = 0;
+        zoomScale = 1;
+        imgPosX = 0;
+        imgPosY = 0;
+
+        modalViewer.style.transform = 'none';
+        modalViewer.style.cursor = 'default';
+        modalWrapper.classList.remove('zoomed');
+
+        disableRotateControls(false);
+    };
+
+    /* ================= ZOOM BUTTONS ================= */
+
+    zoomInBtn?.addEventListener('click', () => {
+        if (zoomStep >= MAX_ZOOM_STEPS) return;
+
+        zoomStep++;
+        zoomScale = 1 + zoomStep * 0.5;
+        enableZoom();
+    });
+
+    zoomOutBtn?.addEventListener('click', () => {
+        if (zoomStep <= 0) return;
+
+        zoomStep--;
+        zoomScale = 1 + zoomStep * 0.5;
+
+        if (zoomStep === 0) {
+            resetZoom();
+        } else {
+            applyZoomTransform();
+        }
+    });
+
+    /* ================= DRAG ================= */
+
+    modalViewer.addEventListener('mousedown', (e) => {
+        if (!isZoomed) return;
+
+        isDragging = true;
+        dragStartX = e.clientX - imgPosX;
+        dragStartY = e.clientY - imgPosY;
+
+        modalViewer.style.cursor = 'grabbing';
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', stopDrag);
+    });
+
+    const onDragMove = (e) => {
+        if (!isDragging) return;
+
+        imgPosX = e.clientX - dragStartX;
+        imgPosY = e.clientY - dragStartY;
+
+        applyZoomTransform();
+    };
+
+    const stopDrag = () => {
+        isDragging = false;
+        modalViewer.style.cursor = 'grab';
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('mouseup', stopDrag);
+    };
+
+    /* ================= CLICK ON VIEWER ================= */
+
+    modalViewer.addEventListener('click', () => {
+        if (isZoomed) return;
+        togglePlayPause();
+    });
+
+    /* ================= FULLSCREEN ================= */
+
+    const toggleFullscreen = () => {
+        modal.classList.toggle('fullscreen');
+
         if (!modalThreeSixty) return;
 
-        if (isPlaying) {
-            modalThreeSixty.stop();
-            playPauseBtn.textContent = '▶️ Play';
-        } else {
-            modalThreeSixty.play();
-            playPauseBtn.textContent = '⏸ Pause';
-        }
-        isPlaying = !isPlaying;
+        const { width, height } = getViewerSize();
+        modalThreeSixty.resize(width, height);
     };
+
+    /* ================= CONTROLS ================= */
+
+    controlsToggle?.addEventListener('click', () => {
+        controlsMenu?.classList.toggle('open');
+    });
 
     trigger?.addEventListener('click', openModal);
     modalClose?.addEventListener('click', closeModal);
+
     playPauseBtn?.addEventListener('click', togglePlayPause);
-    modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal(); });
+    rotateLeftBtn?.addEventListener('click', rotateLeft);
+    rotateRightBtn?.addEventListener('click', rotateRight);
+
+    fullscreenBtn?.addEventListener('click', toggleFullscreen);
+
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal && !isZoomed) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (!modalThreeSixty) return;
+
+        if (e.key === 'Escape') closeModal();
+        if (isZoomed) return;
+
+        if (e.key === 'ArrowLeft') rotateLeft();
+        if (e.key === 'ArrowRight') rotateRight();
+    });
+
 });
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     const images360 = window.product360Images || [];
-//     const modal = document.getElementById('modal-360');
-//     const modalClose = modal?.querySelector('.modal-360-close');
-//     const modalViewer = document.getElementById('product-360');
-//     const trigger = document.getElementById('open-360');
-//     const playPauseBtn = document.getElementById('play-pause-360');
-//
-//     let modalThreeSixty = null;
-//     let isPlaying = false;
-//
-//     const getViewerSize = () => window.innerWidth < 768 ? { width: 300, height: 300 } : { width: 600, height: 600 };
-//
-//     const preloadImages = (images) => {
-//         return Promise.all(images.map(src => new Promise((resolve, reject) => {
-//             const img = new Image();
-//             img.onload = resolve;
-//             img.onerror = reject;
-//             img.src = src;
-//         })));
-//     };
-//
-//     const openModal = async () => {
-//         if (!modal) return;
-//         modal.classList.add('active');
-//
-//         if (!images360.length) return;
-//
-//         await preloadImages(images360);
-//
-//         if (modalThreeSixty && typeof modalThreeSixty.destroy === 'function') {
-//             modalThreeSixty.destroy();
-//             modalThreeSixty = null;
-//         }
-//
-//         modalViewer.innerHTML = '';
-//         const { width, height } = getViewerSize();
-//
-//         modalThreeSixty = new ThreeSixty(modalViewer, {
-//             image: images360,
-//             width,
-//             height,
-//             speed: 100,
-//         });
-//     };
-//
-//     const closeModal = () => {
-//         if (!modal) return;
-//         if (modalThreeSixty && typeof modalThreeSixty.stop === 'function') modalThreeSixty.stop();
-//         modal.classList.remove('active');
-//         modalViewer.innerHTML = '';
-//         modalThreeSixty = null;
-//         isPlaying = false;
-//         if (playPauseBtn) playPauseBtn.textContent = '▶️ Play';
-//     };
-//
-//     const togglePlayPause = () => {
-//         if (!modalThreeSixty) return;
-//         if (isPlaying) {
-//             modalThreeSixty.stop();
-//             playPauseBtn.textContent = '▶️ Play';
-//             isPlaying = false;
-//         } else {
-//             modalThreeSixty.play();
-//             playPauseBtn.textContent = '⏸ Pause';
-//             isPlaying = true;
-//         }
-//     };
-//
-//     trigger?.addEventListener('click', openModal);
-//     modalClose?.addEventListener('click', closeModal);
-//     playPauseBtn?.addEventListener('click', togglePlayPause);
-//     modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-//     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal(); });
-// });
-
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     const images360 = window.product360Images || [];
-//     const modal = document.getElementById('modal-360');
-//     const modalClose = modal?.querySelector('.modal-360-close');
-//     const modalViewer = document.getElementById('product-360');
-//     const trigger = document.getElementById('open-360');
-//     const playPauseBtn = document.getElementById('play-pause-360');
-//
-//     let modalThreeSixty = null;
-//     let isPlaying = false;
-//
-//     // Определяем размеры под устройство
-//     const getViewerSize = () => {
-//         return window.innerWidth < 768
-//             ? { width: 300, height: 300 } // мобильные
-//             : { width: 600, height: 600 }; // десктоп
-//     };
-//     const openModal = () => {
-//         if (!modal) return;
-//         modal.classList.add('active');
-//
-//         // ждём завершения transition (если есть)
-//         modal.addEventListener('transitionend', function handler() {
-//             modal.removeEventListener('transitionend', handler);
-//
-//             if (modalViewer && typeof ThreeSixty === 'function' && Array.isArray(images360) && images360.length > 1) {
-//                 // уничтожаем старый экземпляр, если есть
-//                 if (modalThreeSixty && typeof modalThreeSixty.destroy === 'function') {
-//                     modalThreeSixty.destroy();
-//                     modalThreeSixty = null;
-//                 }
-//
-//                 modalViewer.innerHTML = '';
-//                 const { width, height } = getViewerSize();
-//
-//                 try {
-//                     modalThreeSixty = new ThreeSixty(modalViewer, {
-//                         image: images360,
-//                         width,
-//                         height,
-//                         speed: 100,
-//                     });
-//
-//                     // ждем загрузки кадров
-//                     if (modalThreeSixty.onReady) {
-//                         modalThreeSixty.onReady(() => console.log('✅ Все кадры загружены'));
-//                     }
-//
-//                     console.log('✅ ThreeSixty инициализирован в модалке');
-//                 } catch (e) {
-//                     console.error('Ошибка инициализации ThreeSixty в модалке:', e);
-//                 }
-//             } else {
-//                 console.warn('⚠️ Нет изображений для 360° или ThreeSixty не подключён');
-//             }
-//         });
-//     };
-//
-//
-//     // const openModal = () => {
-//     //     if (!modal) return;
-//     //     modal.classList.add('active');
-//     //
-//     //     setTimeout(() => {
-//     //         if (modalViewer && typeof ThreeSixty === 'function' && Array.isArray(images360) && images360.length > 1) {
-//     //             modalViewer.innerHTML = '';
-//     //             const { width, height } = getViewerSize();
-//     //             try {
-//     //                 modalThreeSixty = new ThreeSixty(modalViewer, {
-//     //                     image: images360,
-//     //                     width,
-//     //                     height,
-//     //                     speed: 100,
-//     //                     // drag: true,
-//     //                     // count: 30,
-//     //                 });
-//     //                 console.log('✅ ThreeSixty инициализирован в модалке');
-//     //             } catch (e) {
-//     //                 console.error('Ошибка инициализации ThreeSixty в модалке:', e);
-//     //             }
-//     //         } else {
-//     //             console.warn('⚠️ Нет изображений для 360° или ThreeSixty не подключён');
-//     //         }
-//     //     }, 350);
-//     // };
-//
-//     const closeModal = () => {
-//         if (!modal) return;
-//
-//         // ⏹️ Если проигрывание идёт — останавливаем
-//         if (modalThreeSixty && typeof modalThreeSixty.stop === 'function') {
-//             modalThreeSixty.stop();
-//         }
-//
-//         modal.classList.remove('active');
-//         if (modalViewer) modalViewer.innerHTML = '';
-//         modalThreeSixty = null;
-//
-//         // Сбрасываем состояние кнопки
-//         isPlaying = false;
-//         if (playPauseBtn) playPauseBtn.textContent = '▶️ Play';
-//     };
-//
-//     const togglePlayPause = () => {
-//         if (!modalThreeSixty || typeof modalThreeSixty.play !== 'function') return;
-//
-//         if (isPlaying) {
-//             modalThreeSixty.stop();
-//             playPauseBtn.textContent = '▶️ Play';
-//             isPlaying = false;
-//         } else {
-//             modalThreeSixty.play();
-//             playPauseBtn.textContent = '⏸ Pause';
-//             isPlaying = true;
-//         }
-//     };
-//
-//     // === Обработчики событий ===
-//     trigger?.addEventListener('click', openModal);
-//     modalClose?.addEventListener('click', closeModal);
-//     playPauseBtn?.addEventListener('click', togglePlayPause);
-//
-//     modal?.addEventListener('click', (e) => {
-//         if (e.target === modal) closeModal();
-//     });
-//
-//     document.addEventListener('keydown', (e) => {
-//         if (e.key === 'Escape' && modal?.classList.contains('active')) {
-//             closeModal();
-//         }
-//     });
-// });
-
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     const images360 = window.product360Images || [];
-//     const modal = document.getElementById('modal-360');
-//     const modalClose = modal?.querySelector('.modal-360-close');
-//     const modalViewer = document.getElementById('product-360');
-//     const trigger = document.getElementById('open-360'); // кнопка "360°"
-//     let modalThreeSixty = null;
-//
-//     const openModal = () => {
-//         if (!modal) return;
-//         modal.classList.add('active');
-//
-//         // Инициализируем 360 только после отображения модалки
-//         setTimeout(() => {
-//             if (modalViewer && typeof ThreeSixty === 'function' && Array.isArray(images360) && images360.length > 1) {
-//                 modalViewer.innerHTML = ''; // очищаем контейнер
-//                 try {
-//                     modalThreeSixty = new ThreeSixty(modalViewer, {
-//                         image: images360,
-//                         width: 600,
-//                         height: 600,
-//                         speed: 100,
-//                         drag: true,
-//                         count: 30,
-//                     });
-//                     console.log('✅ ThreeSixty инициализирован в модалке');
-//                 } catch (e) {
-//                     console.error('Ошибка инициализации ThreeSixty в модалке:', e);
-//                 }
-//             } else {
-//                 console.warn('⚠️ Нет изображений для 360° или ThreeSixty не подключён');
-//             }
-//         }, 150);
-//     };
-//
-//     const closeModal = () => {
-//         if (!modal) return;
-//         modal.classList.remove('active');
-//
-//         // Полностью очищаем viewer при закрытии
-//         if (modalViewer) {
-//             modalViewer.innerHTML = '';
-//         }
-//         modalThreeSixty = null;
-//     };
-//
-//     // === Обработчики событий ===
-//     trigger?.addEventListener('click', openModal);
-//     modalClose?.addEventListener('click', closeModal);
-//
-//     modal?.addEventListener('click', (e) => {
-//         if (e.target === modal) closeModal();
-//     });
-//
-//     document.addEventListener('keydown', (e) => {
-//         if (e.key === 'Escape' && modal?.classList.contains('active')) {
-//             closeModal();
-//         }
-//     });
-
-    // // 360 VIEW INIT ===
-    // const images360 = window.product360Images || [];
-    // console.log('images360:', images360);
-    //
-    // if (images360.length > 1 && typeof ThreeSixty === 'function') {
-    //     const elem = document.getElementById('product-360');
-    //     if (elem) {
-    //         try {
-    //             const threesixty = new ThreeSixty(elem, {
-    //                 image: images360,
-    //                 width: 600,
-    //                 height: 600,
-    //                 speed: 80,
-    //                 drag: true,
-    //                 count: 30,
-    //             });
-    //             // threesixty.play();
-    //             console.log('ThreeSixty инициализирован на странице');
-    //         } catch (e) {
-    //             console.error('Ошибка инициализации ThreeSixty:', e);
-    //         }
-    //     }
-    // }
-    //
-    // // MODAL WINDOW ===
-    // const modal = document.getElementById('modal-360');
-    // const modalClose = modal?.querySelector('.modal-360-close');
-    // const modalViewer = document.getElementById('modal-360-viewer');
-    // const trigger = document.getElementById('open-360');
-    // let modalThreeSixty = null;
-    //
-    // const openModal = () => {
-    //     if (!modal) return;
-    //     modal.classList.add('active');
-    //
-    //     setTimeout(() => {
-    //         if (modalViewer && typeof ThreeSixty === 'function' && Array.isArray(images360) && images360.length > 1) {
-    //             modalViewer.innerHTML = '';
-    //             try {
-    //                 modalThreeSixty = new ThreeSixty(modalViewer, {
-    //                     image: images360,
-    //                     width: 600,
-    //                     height: 600,
-    //                     speed: 100,
-    //                     drag: true,
-    //                 });
-    //                 console.log('✅ ThreeSixty открыт в модалке');
-    //             } catch (e) {
-    //                 console.error('Ошибка инициализации ThreeSixty в модалке:', e);
-    //             }
-    //         } else {
-    //             console.warn('⚠️ Не найдены изображения для 360 или ThreeSixty не подключён.');
-    //         }
-    //     }, 100);
-    // };
-    //
-    // const closeModal = () => {
-    //     if (!modal) return;
-    //     modal.classList.remove('active');
-    //     if (modalViewer) modalViewer.innerHTML = '';
-    //     modalThreeSixty = null;
-    // };
-    //
-    // trigger?.addEventListener('click', openModal);
-    // modalClose?.addEventListener('click', closeModal);
-    //
-    // modal?.addEventListener('click', (e) => {
-    //     if (e.target === modal) closeModal();
-    // });
-    //
-    // document.addEventListener('keydown', (e) => {
-    //     if (e.key === 'Escape' && modal?.classList.contains('active')) {
-    //         closeModal();
-    //     }
-    // });
-
-    // === GALLERY ===
-    // const galleryContainer = document.querySelector('.gallery-grid');
-    // if (galleryContainer && typeof lightGallery === 'function') {
-    //     const plugins = typeof lgZoom !== 'undefined' ? [lgZoom] : [];
-    //     try {
-    //         lightGallery(galleryContainer, {
-    //             selector: '.gallery-item',
-    //             plugins,
-    //             zoom: true,
-    //             download: false,
-    //         });
-    //         console.log('lightGallery инициализирован');
-    //     } catch (e) {
-    //         console.error('Ошибка инициализации lightGallery:', e);
-    //     }
-    // }
 
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof Swiper === 'undefined') {

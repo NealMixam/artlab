@@ -35,11 +35,23 @@
         <div id="modal-360" class="modal-360">
             <div class="modal-360-content">
                 <button class="modal-360-close">&times;</button>
+                            <div class="controls-360">
+                                <button id="controls-toggle-360" class="controls-toggle">☰</button>
+                                <div id="controls-menu-360" class="controls-menu open">
+                                    <button id="fullscreen-360">⛶</button>
+                                    <button id="play-pause-360">⏸</button>
+
+                                    <button id="zoom-in-360">＋</button>
+                                    <button id="zoom-out-360">－</button>
+
+                                    <button id="rotate-left-360">⟲</button>
+                                    <button id="rotate-right-360">⟳</button>
+                                </div>
+                            </div>
                 <div id="modal-360-viewer">
                     <?php if (!empty($images_360_urls)): ?>
                         <div id="product-360-wrapper" class="product-360-trigger" style="margin-bottom:20px;">
                             <div id="product-360"></div>
-                            <button id="play-pause-360" class="btn-play-pause">▶️ Play</button>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -48,7 +60,6 @@
 
         <div class="product-container">
             <div class="product-gallery">
-                <button id="open-360" class="btn-360">360°</button>
                 <?php if (!empty($gallery_urls)): ?>
                     <div class="swiper main-slider">
                         <div class="swiper-wrapper">
@@ -61,8 +72,9 @@
                             <?php endforeach; ?>
                         </div>
                     </div>
-
-                    <div class="swiper thumbs-slider">
+                    <div class="product-gallery__bottom">
+                        <button id="open-360" class="btn-360">"Живое" фото 360°</button>
+                        <div class="swiper thumbs-slider">
                         <div class="swiper-wrapper">
                             <?php foreach ($gallery_urls as $img_url): ?>
                                 <div class="swiper-slide">
@@ -70,6 +82,7 @@
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                    </div>
                     </div>
                 <?php endif; ?>
             </div>

@@ -18,4 +18,24 @@ jQuery(document).ready(function($){
             download: false
         });
     });
+
+    const aboutGallery = document.querySelectorAll('.about-gallery');
+    aboutGallery.forEach(function(galleryBlock) {
+        lightGallery(galleryBlock, {
+            selector: '.about-image img',
+            plugins: [lgZoom],
+            zoom: true,
+            download: false
+        });
+    });
+
+    const projectGallery = document.querySelectorAll('.gallery-grid');
+    projectGallery.forEach(function(galleryBlock) {
+        lightGallery(galleryBlock, {
+            selector: '.gallery-card img',
+            plugins: [lgZoom],
+            zoom: true,
+            download: false
+        });
+    });
 });

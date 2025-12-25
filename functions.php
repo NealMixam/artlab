@@ -636,4 +636,13 @@ function save_product_work_price_metabox($post_id) {
 }
 add_action('save_post', 'save_product_work_price_metabox');
 
+add_filter('big_image_size_threshold', '__return_false');
+
+add_filter('jpeg_quality', function() {
+    return 100;
+});
+
+add_filter('wp_editor_set_quality', function() {
+    return 100;
+});
 

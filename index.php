@@ -66,9 +66,11 @@
             endif;
             ?>
         </div>
-<!--        <div class="home-btn-wrap">-->
-<!--            <a href="--><?php //echo get_post_type_archive_link('gallery'); ?><!--" class="btn-primary">Смотреть все</a>-->
-<!--        </div>-->
+        <div class="home-btn-wrap">
+            <a href="<?php echo esc_url( get_permalink( get_page_by_path( 'gallery' ) ) ); ?>" class="btn-primary">
+                Смотреть все
+            </a>
+        </div>
     </section>
 
     <section class="home-section contact-section">
