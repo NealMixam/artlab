@@ -20,7 +20,10 @@ get_header();
             $reverse = $index % 2 === 0 ? ' reverse' : '';
             ?>
 
-            <section class="gallery-block<?php echo $reverse; ?>">
+            <section
+                id="gallery-<?php echo esc_attr( get_post_field( 'post_name', get_the_ID() ) ); ?>"
+                class="gallery-block<?php echo $reverse; ?>"
+            >
                 <div class="gallery-text">
                     <h2><?php the_title(); ?></h2>
                     <div class="gallery-description">

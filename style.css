@@ -10,6 +10,10 @@ Version: 1.0.0
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -997,6 +1001,10 @@ a:hover {
     object-fit: cover;
     display: block;
     border-radius: 4px;
+}
+
+.product-gallery .swiper-wrapper {
+    align-items: center;
 }
 
 .main-slider img {
