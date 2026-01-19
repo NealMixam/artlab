@@ -24,7 +24,6 @@ body {
     font-family: "Montserrat", sans-serif;
     color: #333;
     line-height: 1.5;
-    background: #fafafa;
 }
 
 a {
@@ -45,10 +44,17 @@ a:hover {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background: radial-gradient(1200px 800px at 20% 10%, #FAF7F3 0%, #F5F1EC 45%, #EEE6DD 100%);
 }
 
 .site-header {
-    background: #fff;
+    background:
+            linear-gradient(
+                    180deg,
+                    #F2ECE5 0%,
+                    #EAE2D9 100%
+            );
+    border-bottom: 1px solid #D8CEC4;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     padding: 16px 0;
     position: sticky;
@@ -125,8 +131,13 @@ a:hover {
 
 .site-sidebar {
     width: 280px;
-    background: #fff;
-    border-right: 1px solid #ddd;
+    background:
+            linear-gradient(
+                    180deg,
+                    #EFE8E1 0%,
+                    #E6DDD4 100%
+            );
+    border-right: 1px solid #D8CEC4;
     overflow-y: auto;
     position: sticky;
     top: 110px;
@@ -228,7 +239,6 @@ a:hover {
 }
 
 .home-section.alt {
-    background: #fafafa;
     border-radius: 16px;
 }
 
@@ -256,12 +266,15 @@ a:hover {
     border-radius: 10px;
     padding: 20px;
     text-align: center;
-    background: #fff;
+    background: #EEE6DE;
     transition: 0.3s;
+    box-shadow:
+            0 8px 24px rgba(60, 45, 30, 0.08);
 }
 
 .product-card:hover {
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    box-shadow:
+            0 14px 36px rgba(60, 45, 30, 0.12);
 }
 
 .product-image {
@@ -300,7 +313,7 @@ a:hover {
     display: inline-block;
     margin-top: 20px;
     padding: 10px 18px;
-    background: #5FAEB6;
+    background: #6F9FA3;
     border: none;
     font-size: 16px;
     color: #fff;
@@ -313,12 +326,11 @@ a:hover {
 }
 
 .btn-details:hover, .btn-primary:hover {
-    background-color: #4FA0A8;
+    background-color: #5E8E92;
     color: #FFFFFF;
 }
 
 .about-section {
-    background-color: #fafafa;
     padding: 80px 20px;
 }
 
@@ -408,7 +420,6 @@ a:hover {
 }
 
 .contact-section {
-    background: #f9f9f9;
     padding: 80px 20px;
 }
 
@@ -455,10 +466,12 @@ a:hover {
 .feedback-form textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #D2C7BC;
     border-radius: 6px;
     font-size: 15px;
+    color: #4A4036;
     transition: border-color 0.3s;
+    background-color: #F6F2ED;
 }
 
 .feedback-form input:focus,
@@ -517,7 +530,7 @@ a:hover {
 }
 
 .products-filters {
-    background: #fff;
+    background: linear-gradient(180deg, #F2ECE6, #E8DED4);
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -549,8 +562,13 @@ a:hover {
     color: #555;
 }
 
+.filter-group input {
+    background-color: #F6F2ED;
+    border: 1px solid #D2C7BC;
+    color: #4A4036;
+}
+
 .filter-group input[type="checkbox"] {
-    accent-color: #0073aa;
     width: 16px;
     height: 16px;
     margin-right: 6px;
@@ -560,7 +578,6 @@ a:hover {
     width: 100%;
     padding: 6px 8px;
     margin-bottom: 8px;
-    border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 0.9rem;
     box-sizing: border-box;
@@ -575,26 +592,49 @@ a:hover {
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    transition: background 0.3s, color 0.3s;
 }
 
 .apply-filters {
-    background: #333;
+    background-color: #6F9FA3;
     color: #fff;
     margin-bottom: 16px;
+    box-shadow: 0 6px 16px rgba(111, 159, 163, 0.35);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
 .apply-filters:hover {
-    background: #000;
+    background-color: #5E8E92;
+    box-shadow: 0 10px 22px rgba(94, 142, 146, 0.4);
+}
+
+.apply-filters:active {
+    background-color: #547F83;
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(84, 127, 131, 0.45);
 }
 
 .reset-filters {
-    background: #eee;
-    color: #333;
+    background-color: #E8E2DB;
+    color: #6B5A4A;
+    border: 1px solid #D2C7BC;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .reset-filters:hover {
-    background: #ddd;
+    background-color: #DED6CE;
+    border-color: #C6B9AD;
+}
+
+.reset-filters:active {
+    background-color: #D6CDC4;
+}
+
+.apply-filters:disabled, .reset-filters:disabled {
+    background-color: #E0DBD5;
+    color: #9A8F84;
+    border-color: #D8CEC4;
+    box-shadow: none;
+    cursor: not-allowed;
 }
 
 .single-product {
@@ -617,7 +657,6 @@ a:hover {
     border: 1px solid #ddd;
     box-sizing: border-box;
     max-width: 800px;
-    background: #fff;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -632,7 +671,6 @@ a:hover {
 }
 
 .product-info {
-    background: #fff;
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
