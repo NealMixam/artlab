@@ -73,7 +73,9 @@
                         </div>
                     </div>
                     <div class="product-gallery__bottom">
-                        <button id="open-360" class="btn-360">"Живое" фото 360°</button>
+                        <button id="open-360" class="btn-360">
+                            <img src="http://artlabmsk.ru/wp-content/uploads/2026/01/360-degrees-300x300.png">
+                        </button>
                         <div class="swiper thumbs-slider">
                         <div class="swiper-wrapper">
                             <?php foreach ($gallery_urls as $img_url): ?>

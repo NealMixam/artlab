@@ -29,13 +29,13 @@ jQuery(document).ready(function($){
         });
     });
 
-    const projectGallery = document.querySelectorAll('.gallery-grid');
-    projectGallery.forEach(function(galleryBlock) {
-        lightGallery(galleryBlock, {
-            selector: '.gallery-card img',
-            plugins: [lgZoom],
-            zoom: true,
-            download: false
-        });
-    });
+    // const projectGallery = document.querySelectorAll('.gallery-grid');
+    // projectGallery.forEach(function(galleryBlock) {
+    //     lightGallery(galleryBlock, {
+    //         selector: '.gallery-card img',
+    //         plugins: [lgZoom],
+    //         zoom: true,
+    //         download: false
+    //     });
+    // });
 });

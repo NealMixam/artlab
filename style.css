@@ -300,8 +300,8 @@ a:hover {
     display: inline-block;
     margin-top: 20px;
     padding: 10px 18px;
-    background: #000;
-    border: 1px solid #000;
+    background: #5FAEB6;
+    border: none;
     font-size: 16px;
     color: #fff;
     border-radius: 6px;
@@ -313,8 +313,8 @@ a:hover {
 }
 
 .btn-details:hover, .btn-primary:hover {
-    background-color: #fff;
-    color: #000;
+    background-color: #4FA0A8;
+    color: #FFFFFF;
 }
 
 .about-section {
@@ -360,24 +360,34 @@ a:hover {
 }
 
 .gallery-grid .gallery-card img {
-    height: 180px;
-    object-fit: contain;
-    border-radius: 10px;
+    height: 100%;
+    object-fit: cover;
 }
 
 .gallery-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     text-align: center;
-    padding: 20px;
 }
 
-.gallery-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+/*.gallery-card:hover {*/
+/*    transform: translateY(-4px);*/
+/*    box-shadow: 0 8px 18px rgba(0,0,0,0.12);*/
+/*}*/
+
+.gallery-card h3 {
+    position: absolute;
+    color: white;
+    bottom: 0;
+    text-align: center;
+    filter: drop-shadow(2px 4px 6px black);
 }
 
 .gallery-thumb img {
@@ -657,20 +667,22 @@ a:hover {
 .btn-back {
     margin-top: 20px;
     padding: 10px 18px;
-    background: #000;
-    border: 1px solid #000;
+    background-color: transparent;
+    border: 1px solid #5FAEB6;
     font-size: 16px;
-    color: #fff;
+    color: #5FAEB6;
     border-radius: 6px;
     text-decoration: none !important;
-    transition: background-color, color 0.3s ease-out;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
     font-weight: 500;
     letter-spacing: 0.5px;
 }
 
+/* hover */
 .btn-back:hover {
-    background-color: #fff;
-    color: #000;
+    background-color: #5FAEB6;
+    color: #FFFFFF;
+    border-color: #5FAEB6;
 }
 
 .product-360-wrapper {
@@ -748,7 +760,6 @@ a:hover {
     position: relative;
     max-width: 80px;
     height: 80px;
-    background: #000;
     color: #fff;
     border: none;
     padding: 10px 12px;
@@ -761,9 +772,9 @@ a:hover {
     z-index: 10;
 }
 
-.btn-360:hover {
-    background: #444;
-    transform: scale(1.05);
+.btn-360 img {
+    width: 100%;
+    height: 100%;
 }
 
 .btn-play-pause {
@@ -898,8 +909,6 @@ a:hover {
 
 .gallery-grid img {
     width: 100%;
-    border-radius: 8px;
-    cursor: zoom-in;
     transition: transform 0.2s;
 }
 
