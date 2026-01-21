@@ -44,16 +44,14 @@ a:hover {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: radial-gradient(1200px 800px at 20% 10%, #FAF7F3 0%, #F5F1EC 45%, #EEE6DD 100%);
 }
 
 .site-header {
-    background:
-            linear-gradient(
-                    180deg,
-                    #F2ECE5 0%,
-                    #EAE2D9 100%
-            );
+    background: linear-gradient(
+            180deg,
+            #F5EFE8 0%,
+            #EEE6DC 100%
+    );
     border-bottom: 1px solid #D8CEC4;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     padding: 16px 0;
@@ -143,12 +141,13 @@ a:hover {
     top: 110px;
     height: calc(100vh - 130px);
     flex-shrink: 0;
+    z-index: 1;
 }
 
 .sidebar-menu {
     list-style: none;
     margin: 0;
-    padding: 16px 20px 16px 40px;
+    padding: 16px 20px 16px 20px;
 }
 
 .sidebar-menu li {
@@ -156,8 +155,23 @@ a:hover {
 }
 
 .sidebar-menu a {
+    position: relative;
     color: #333;
     text-decoration: none;
+    padding-left: 20px;
+}
+
+.sidebar-menu li a::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid currentColor;
 }
 
 .sidebar-menu a:hover {
@@ -173,7 +187,7 @@ a:hover {
     font-size: 18px;
     font-weight: 500;
     color: #111;
-    padding: 12px 10px;
+    padding: 12px 10px 12px 40px;
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.3s ease;
@@ -193,10 +207,25 @@ a:hover {
     overflow-y: auto;
 }
 
+.content-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("assets/images/pale-wall-texture.jpg");
+    background-size: contain;
+    background-repeat: repeat;
+    filter: blur(2px);
+    z-index: 0;
+}
+
+.content-wrapper > * {
+    position: relative;
+    z-index: 1;
+}
+
 .site-main {
     flex: 1;
     font-size: 18px;
-    /*padding: 20px;*/
 }
 
 .site-main .content-area {
@@ -252,7 +281,7 @@ a:hover {
 
 .home-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
 }
 
@@ -263,13 +292,12 @@ a:hover {
 
 .product-card {
     border: 1px solid #eee;
-    border-radius: 10px;
     padding: 20px;
     text-align: center;
-    background: #EEE6DE;
     transition: 0.3s;
-    box-shadow:
-            0 8px 24px rgba(60, 45, 30, 0.08);
+    background: #F3EEE7;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.04);
 }
 
 .product-card:hover {
@@ -279,6 +307,7 @@ a:hover {
 
 .product-image {
     margin-bottom: 12px;
+    box-shadow: 0 8px 24px rgba(60, 45, 30, 0.08);
 }
 
 .product-image img {
@@ -291,8 +320,8 @@ a:hover {
 
 .product-card img {
     width: 100%;
-    height: 200px;
-    object-fit: contain;
+    height: 300px;
+    object-fit: cover;
 }
 
 .product-card h2 {
@@ -354,7 +383,7 @@ a:hover {
 
 .about-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 10px;
 }
 
@@ -525,7 +554,7 @@ a:hover {
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
 
@@ -927,8 +956,12 @@ a:hover {
 
 .gallery-images {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 10px;
+}
+
+.gallery-images  > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
 }
 
 .gallery-img img {
@@ -1499,7 +1532,7 @@ a:hover {
 
 .gallery-images {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 15px;
     align-items: start;
 }

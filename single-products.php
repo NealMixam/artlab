@@ -74,7 +74,10 @@
                     </div>
                     <div class="product-gallery__bottom">
                         <button id="open-360" class="btn-360">
-                            <img src="http://artlabmsk.ru/wp-content/uploads/2026/01/360-degrees-300x300.png">
+                            <img
+                                src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/360.png"
+                                alt=""
+                            >
                         </button>
                         <div class="swiper thumbs-slider">
                         <div class="swiper-wrapper">

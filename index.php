@@ -6,7 +6,7 @@
             <?php
             $products = new WP_Query([
                 'post_type' => 'products',
-                'posts_per_page' => 6
+                'posts_per_page' => 8
             ]);
 
             if ($products->have_posts()) :
