@@ -11,6 +11,7 @@ function twentytwentyfive_child_enqueue_styles() {
         ['parent-style']
     );
 }
+
 add_action('wp_enqueue_scripts', 'twentytwentyfive_child_enqueue_styles');
     
 function create_custom_post_types() {
@@ -32,6 +33,7 @@ function create_custom_post_types() {
         'supports'=>['title','editor','thumbnail','excerpt']
     ]);
 }
+
 add_action('init','create_custom_post_types');
 
 function create_custom_taxonomies() {
@@ -43,6 +45,7 @@ function create_custom_taxonomies() {
 
     register_taxonomy('coating_type','coatings',['labels'=>['name'=>'Тип покрытия'],'hierarchical'=>false,'show_in_rest'=>true,'rewrite'=>['slug'=>'coating_type']]);
 }
+
 add_action('init','create_custom_taxonomies');
 
 function enqueue_filter_scripts() {
@@ -52,11 +55,15 @@ function enqueue_filter_scripts() {
         'nonce' => wp_create_nonce('filters_nonce')
     ]);
 }
+
 add_action('wp_enqueue_scripts','enqueue_filter_scripts');
 
 add_action('wp_ajax_filter_products','filter_products_ajax');
+
 add_action('wp_ajax_nopriv_filter_products','filter_products_ajax');
+
 add_action('wp_ajax_filter_coatings','filter_coatings_ajax');
+
 add_action('wp_ajax_nopriv_filter_coatings','filter_coatings_ajax');
 
 function filter_products_ajax(){
@@ -72,7 +79,7 @@ function filter_products_ajax(){
     if(!empty($_POST['product_application'])) $tax_query[] = ['taxonomy'=>'product_application','field'=>'slug','terms'=>$_POST['product_application']];
     if(count($tax_query)>1) $args['tax_query']=$tax_query;
 
-    // price (основная цена товара)
+    // price - основная цена товара
     $meta_query=[];
     if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
         $meta_query[]=['key'=>'price','value'=>[floatval($_POST['min_price']),floatval($_POST['max_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
@@ -80,7 +87,7 @@ function filter_products_ajax(){
     elseif(!empty($_POST['min_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['min_price']),'type'=>'NUMERIC','compare'=>'>='];
     elseif(!empty($_POST['max_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['max_price']),'type'=>'NUMERIC','compare'=>'<='];
 
-    // price for work (цена за работу)
+    // price for work - цена за работу
     if(!empty($_POST['min_work_price']) && !empty($_POST['max_work_price'])){
         $meta_query[]=['key'=>'_product_work_price','value'=>[floatval($_POST['min_work_price']),floatval($_POST['max_work_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
     }
@@ -108,39 +115,6 @@ function filter_products_ajax(){
 
     wp_send_json_success(['html'=>ob_get_clean()]);
 }
-// function filter_products_ajax(){
-//     check_ajax_referer('filters_nonce','nonce');
-//
-//     $args = ['post_type'=>'products','posts_per_page'=>12,'paged'=>$_POST['paged']??1];
-//
-//     $tax_query = ['relation'=>'AND'];
-//
-//     if(!empty($_POST['product_finish'])) $tax_query[] = ['taxonomy'=>'product_finish','field'=>'slug','terms'=>$_POST['product_finish']];
-//     if(!empty($_POST['product_style'])) $tax_query[] = ['taxonomy'=>'product_style','field'=>'slug','terms'=>$_POST['product_style']];
-//     if(!empty($_POST['product_brand'])) $tax_query[] = ['taxonomy'=>'product_brand','field'=>'slug','terms'=>$_POST['product_brand']];
-//     if(!empty($_POST['product_application'])) $tax_query[] = ['taxonomy'=>'product_application','field'=>'slug','terms'=>$_POST['product_application']];
-//     if(count($tax_query)>1) $args['tax_query']=$tax_query;
-//
-//     // price
-//     $meta_query=[];
-//     if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
-//         $meta_query[]=['key'=>'price','value'=>[floatval($_POST['min_price']),floatval($_POST['max_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
-//     }
-//     elseif(!empty($_POST['min_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['min_price']),'type'=>'NUMERIC','compare'=>'>='];
-//     elseif(!empty($_POST['max_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['max_price']),'type'=>'NUMERIC','compare'=>'<='];
-//     if($meta_query) $args['meta_query']=$meta_query;
-//
-//     $query=new WP_Query($args);
-//     ob_start();
-//     if($query->have_posts()){
-//         while($query->have_posts()){ $query->the_post();
-//             get_template_part('template-parts/product','card');
-//         }
-//     } else { echo '<p>Ничего не найдено</p>'; }
-//     wp_reset_postdata();
-//
-//     wp_send_json_success(['html'=>ob_get_clean()]);
-// }
 
 function filter_coatings_ajax(){
     check_ajax_referer('filters_nonce','nonce');
@@ -161,13 +135,11 @@ function filter_coatings_ajax(){
 }
 
 function theme_enqueue_product_gallery() {
-    // ВРЕМЕННО: подключаем на всех страницах для теста
     wp_enqueue_style('lightgallery-css', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css');
     wp_enqueue_script('lightgallery-js', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.umd.min.js', array('jquery'), null, true);
     wp_enqueue_script('lightgallery-zoom', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.umd.js', array('lightgallery-js'), null, true);
     wp_enqueue_script('lightgallery-init', get_stylesheet_directory_uri() . '/js/lightgallery-init.js', array('lightgallery-js'), null, true);
 
-    // Для товаров
     if (is_singular('products')) {
         wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
         wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
@@ -175,19 +147,8 @@ function theme_enqueue_product_gallery() {
         wp_enqueue_script('single-product-init', get_stylesheet_directory_uri() . '/js/single-product.js', array('lightgallery-js','threesixty-js'), null, true);
     }
 }
+
 add_action('wp_enqueue_scripts', 'theme_enqueue_product_gallery');
-// function theme_enqueue_product_gallery() {
-//     wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
-//     wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
-//     wp_enqueue_style('lightgallery-css', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css');
-//     wp_enqueue_script('lightgallery-js', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.umd.min.js', array('jquery'), null, true);
-//     wp_enqueue_script('lightgallery-zoom', 'https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.umd.js', array('lightgallery-js'), null, true);
-//
-//     wp_enqueue_script('threesixty-js', get_stylesheet_directory_uri() . '/js/threesixty.js', array('jquery'), null, true);
-//
-//     wp_enqueue_script('single-product-init', get_stylesheet_directory_uri() . '/js/single-product.js', array('lightgallery-js','threesixty-js'), null, true);
-// }
-// add_action('wp_enqueue_scripts', 'theme_enqueue_product_gallery');
 
 // === 360° Images Metabox ===
 function add_360_images_metabox() {
@@ -200,6 +161,7 @@ function add_360_images_metabox() {
         'default'
     );
 }
+
 add_action('add_meta_boxes', 'add_360_images_metabox');
 
 function render_360_images_metabox($post) {
@@ -274,6 +236,8 @@ function mytheme_child_setup()
     ]);
 }
 
+add_theme_support('title-tag');
+
 add_action('after_setup_theme', 'mytheme_child_setup');
 
 
@@ -303,6 +267,7 @@ function create_gallery_post_type() {
         'show_in_rest' => true,
     ));
 }
+
 add_action('init', 'create_gallery_post_type');
 
 add_theme_support('post-thumbnails');
@@ -314,10 +279,11 @@ function add_product_price_metabox() {
             'Цена товара',
             'render_product_price_metabox',
             'products',
-            'side', // боковая колонка
+            'side',
             'default'
     );
 }
+
 add_action('add_meta_boxes', 'add_product_price_metabox');
 
 function render_product_price_metabox($post) {
@@ -341,8 +307,8 @@ function save_product_price_metabox($post_id) {
         update_post_meta($post_id, '_product_price', floatval($_POST['product_price']));
     }
 }
-add_action('save_post', 'save_product_price_metabox');
 
+add_action('save_post', 'save_product_price_metabox');
 
 // === Настройки секции "О нас" ===
 function about_section_settings_init() {
@@ -371,6 +337,7 @@ function about_section_settings_init() {
     );
     register_setting('reading', 'about_images', ['sanitize_callback' => 'sanitize_text_field']);
 }
+
 add_action('admin_init', 'about_section_settings_init');
 
 function about_text_render() {
@@ -461,6 +428,7 @@ function add_product_gallery_metabox() {
             'default'
     );
 }
+
 add_action('add_meta_boxes', 'add_product_gallery_metabox');
 
 function render_product_gallery_metabox($post) {
@@ -524,6 +492,7 @@ function save_product_gallery_metabox($post_id) {
         delete_post_meta($post_id, '_product_gallery_images');
     }
 }
+
 add_action('save_post', 'save_product_gallery_metabox');
 
 function mytheme_enqueue_scripts() {
@@ -536,9 +505,10 @@ function mytheme_enqueue_scripts() {
             true
     );
 }
+
 add_action('wp_enqueue_scripts', 'mytheme_enqueue_scripts');
 
-// === Добавляем ссылку "Копировать" в список записей ===
+// === Добавляем кнопку "Копировать" в список записей ===
 add_filter('post_row_actions', function($actions, $post) {
     if ($post->post_type === 'products') {
         $actions['duplicate'] = '<a href="' . wp_nonce_url(
@@ -573,7 +543,6 @@ add_action('admin_action_duplicate_product', function() {
 
     $new_post_id = wp_insert_post($new_post);
 
-    // Копируем метаданные
     $meta = get_post_meta($post_id);
     foreach ($meta as $key => $values) {
         foreach ($values as $value) {
@@ -581,14 +550,12 @@ add_action('admin_action_duplicate_product', function() {
         }
     }
 
-    // Копируем термины (категории, метки и т.п.)
     $taxonomies = get_object_taxonomies($post->post_type);
     foreach ($taxonomies as $taxonomy) {
         $terms = wp_get_object_terms($post_id, $taxonomy, ['fields' => 'ids']);
         wp_set_object_terms($new_post_id, $terms, $taxonomy);
     }
 
-    // Перенаправляем на экран редактирования новой записи
     wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
     exit;
 });
@@ -604,6 +571,7 @@ function add_product_work_price_metabox() {
         'default'
     );
 }
+
 add_action('add_meta_boxes', 'add_product_work_price_metabox');
 
 function render_product_work_price_metabox($post) {
@@ -634,6 +602,7 @@ function save_product_work_price_metabox($post_id) {
         }
     }
 }
+
 add_action('save_post', 'save_product_work_price_metabox');
 
 add_filter('big_image_size_threshold', '__return_false');
