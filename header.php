@@ -46,7 +46,7 @@
             }
             ?>
             <div class="mobile-contacts mobile-only">
-                <a href="tel:+79295401177">+7 (929) 540-11-77</a>
+                <a class="btn-phone" href="tel:+79295401177">+7 (929) 540-11-77</a>
                 <?php get_template_part('template-parts/social-icons'); ?>
             </div>
         </nav>
