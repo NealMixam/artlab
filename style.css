@@ -252,12 +252,16 @@ a:hover {
 }
 
 .home-section {
-    padding: 32px 20px;
+    padding: 24px 60px;
     width: 100%;
 }
 
 .home-section.alt {
     border-radius: 16px;
+}
+
+.gallery-section {
+    padding: 30px 20px;
 }
 
 .section-title {
@@ -268,10 +272,18 @@ a:hover {
     color: #222;
 }
 
+.home-section .section-title {
+    margin: 0 0 24px;
+}
+
 .home-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
     gap: 25px;
+}
+
+.home-grid .product-card {
+    padding: 12px;
 }
 
 .home-btn-wrap {
@@ -291,7 +303,7 @@ a:hover {
 
 .product-card:hover {
     box-shadow:
-            0 14px 36px rgba(60, 45, 30, 0.12);
+            0 14px 36px rgba(60, 45, 30, 0.45);
 }
 
 .product-image {
@@ -313,18 +325,23 @@ a:hover {
     object-fit: cover;
 }
 
+.home-grid .product-image > img {
+    height: 180px;
+}
+
 .product-card h2 {
     font-weight: 600;
     font-size: 18px;
     color: #333;
-    margin-bottom: 8px;
+    /*margin-bottom: 8px;*/
+    margin: 0;
 }
 
 .product-title {
     font-weight: 600;
     font-size: 18px;
     color: #333;
-    margin-bottom: 8px;
+    margin: 0;
 }
 
 .btn-details, .btn-primary {
@@ -337,7 +354,7 @@ a:hover {
     background: #6F9FA3;
     border: none;
     border-radius: 6px;
-    margin-top: 20px;
+    margin-top: 12px;
     padding: 10px 18px;
     transition: background-color, color 0.3s ease-out;
     box-sizing: border-box;
@@ -377,9 +394,22 @@ a:hover {
 
 .about-gallery img {
     width: 100%;
-    border-radius: 8px;
+    height: 100%;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.4s ease;
+}
+
+.about-image {
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.about-image:hover {
+    & > img {
+        transform: scale(1.15);
+    }
 }
 
 .gallery-grid {
@@ -403,8 +433,18 @@ a:hover {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.4s ease, box-shadow 0.25s ease;
     text-align: center;
+
+    &:hover {
+        & > img {
+            transform: scale(1.15);
+        }
+    }
+}
+
+.gallery-card img {
+    transition: transform 0.4s ease;
 }
 
 .gallery-card h3 {
@@ -481,6 +521,7 @@ a:hover {
     padding: 10px 12px;
     border: 1px solid #D2C7BC;
     border-radius: 6px;
+    font-family: "Montserrat", sans-serif;
     font-size: 15px;
     color: #4A4036;
     transition: border-color 0.3s;

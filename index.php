@@ -47,7 +47,7 @@
         </div>
     </section>
 
-    <section class="home-section">
+    <section class="home-section gallery-section">
         <h2 class="section-title">Галерея проектов</h2>
         <div class="home-grid gallery-grid">
             <?php
