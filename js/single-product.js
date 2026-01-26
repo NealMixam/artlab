@@ -19,8 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const controlsToggle = document.getElementById('controls-toggle-360');
     const controlsMenu = document.getElementById('controls-menu-360');
     const fullscreenBtn = document.getElementById('fullscreen-360');
+    const header = document.querySelector('.site-header');
+    const footer = document.querySelector('.site-footer');
 
     let modalThreeSixty = null;
+    let viewerInitialized = false;
 
     /* ================= STATE ================= */
 
@@ -51,11 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return window.innerWidth < 768
             ? { width: 300, height: 300 }
-            : { width: 600, height: 600 };
+            : { width: 800, height: 800 };
     };
 
     const updatePlayButton = () => {
-        playPauseBtn.textContent = isPlaying ? '⏸' : '▶️';
+        playPauseBtn.textContent = isPlaying ? '⏸️' : '▶️';
     };
 
     const disableRotateControls = (disabled) => {
@@ -82,10 +85,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ================= MODAL ================= */
 
-    const openModal = () => {
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    const renderLoader = () => {
+        modalViewer.innerHTML = `
+        <div class="viewer-loader">
+            <div class="spinner"></div>
+            <div class="loader-text">Загрузка 360°…</div>
+        </div>
+    `;
+    };
+
+    const openModal = async () => {
         if (!modal || !sprite360) return;
 
         modal.classList.add('active');
+        header.style.zIndex = '1';
+        footer.style.zIndex = '0';
+
+        if (viewerInitialized) {
+            modalViewer.innerHTML = '';
+
+            const { width, height } = getViewerSize();
+
+            modalThreeSixty = new ThreeSixty(modalViewer, {
+                image: sprite360,
+                width,
+                height,
+                count: framesCount,
+                perRow: framesPerRow,
+                speed: 100
+            });
+
+            resetZoom();
+            disableRotateControls(false);
+            startAutoplay();
+            return;
+        }
+
+        modalViewer.innerHTML = '';
+
+        renderLoader();
+
+        await delay(8000);
+
         modalViewer.innerHTML = '';
 
         const { width, height } = getViewerSize();
@@ -99,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
             speed: 100
         });
 
+        viewerInitialized = true;
+
         resetZoom();
         disableRotateControls(false);
         startAutoplay();
@@ -107,7 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModal = () => {
         modal.classList.remove('active');
         modal.classList.remove('fullscreen');
-        modalViewer.innerHTML = '';
+        header.style.zIndex = '10000';
+        footer.style.zIndex = '1';
+        // modalViewer.innerHTML = '';
 
         modalThreeSixty?.stop?.();
         modalThreeSixty = null;
@@ -272,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!modalThreeSixty) return;
 
         const { width, height } = getViewerSize();
-        modalThreeSixty.resize(width, height);
+        // modalThreeSixty.resize(width, height);
     };
 
     /* ================= CONTROLS ================= */

@@ -57,7 +57,7 @@ a:hover {
     padding: 16px 0;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 10000;
     width: 100%;
     flex-shrink: 0;
 }
@@ -69,6 +69,7 @@ a:hover {
     width: 100%;
     margin: 0 auto;
     padding: 0 40px;
+    z-index: 1;
 }
 
 .site-branding {
@@ -227,6 +228,7 @@ a:hover {
     padding: 40px 0;
     margin-top: 60px;
     flex-shrink: 0;
+    z-index: 1;
 }
 
 .site-footer .container {
@@ -791,6 +793,10 @@ a:hover {
     overflow: hidden;
 }
 
+#product-360-wrapper {
+    height: 800px;
+}
+
 #product-360-trigger{
     width: 100%;
     max-width: 600px;
@@ -799,6 +805,9 @@ a:hover {
 }
 
 #product-360 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     margin: 0 auto;
 }
@@ -865,6 +874,10 @@ a:hover {
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 10;
+
+    &:hover {
+        opacity: 0.7;
+    }
 }
 
 .btn-360 img {
@@ -918,7 +931,7 @@ a:hover {
     background: #fff;
     border-radius: 12px;
     padding: 20px;
-    max-width: 800px;
+    max-width: 900px;
     width: 100%;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
@@ -944,6 +957,34 @@ a:hover {
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.98); }
     to { opacity: 1; transform: scale(1); }
+}
+
+.viewer-loader {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(0,0,0,0.1);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loader-text {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.7;
 }
 
 /* ===========================  CONTACTS PAGE  =========================== */
@@ -1634,6 +1675,7 @@ a:hover {
 }
 
 #product-360 {
+    height: 100%;
     cursor: zoom-in;
     transition: transform 0.3s ease;
 }
