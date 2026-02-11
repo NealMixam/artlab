@@ -107,11 +107,11 @@
 
             <div class="product-prices">
                 <?php if ($price): ?>
-                    <p class="product-price"><strong>Цена товара:</strong> <?php echo esc_html(number_format($price, 2, '.', ' ')); ?> ₽</p>
+                    <p class="product-price"><strong>Цена товара: от <?php echo esc_html(number_format($price, 2, '.', ' ')); ?> ₽</strong> за м<sup>2</sup></p>
                 <?php endif; ?>
 
                 <?php if ($work_price): ?>
-                    <p class="product-work-price"><strong>Цена за работу:</strong> <?php echo esc_html(number_format($work_price, 2, '.', ' ')); ?> ₽</p>
+                    <p class="product-work-price"><strong>Цена за работу: от <?php echo esc_html(number_format($work_price, 2, '.', ' ')); ?> ₽</strong> за м<sup>2</sup></p>
                 <?php endif; ?>
             </div>
         </div>

@@ -70,34 +70,39 @@ function filter_products_ajax(){
     check_ajax_referer('filters_nonce','nonce');
 
     $args = ['post_type'=>'products','posts_per_page'=>12,'paged'=>$_POST['paged']??1];
-
     $tax_query = ['relation'=>'AND'];
 
+    // Фильтрация по таксономиям (оставляем как было)
     if(!empty($_POST['product_finish'])) $tax_query[] = ['taxonomy'=>'product_finish','field'=>'slug','terms'=>$_POST['product_finish']];
     if(!empty($_POST['product_style'])) $tax_query[] = ['taxonomy'=>'product_style','field'=>'slug','terms'=>$_POST['product_style']];
     if(!empty($_POST['product_brand'])) $tax_query[] = ['taxonomy'=>'product_brand','field'=>'slug','terms'=>$_POST['product_brand']];
     if(!empty($_POST['product_application'])) $tax_query[] = ['taxonomy'=>'product_application','field'=>'slug','terms'=>$_POST['product_application']];
     if(count($tax_query)>1) $args['tax_query']=$tax_query;
 
-    // price - основная цена товара
-    $meta_query=[];
-    if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
-        $meta_query[]=['key'=>'price','value'=>[floatval($_POST['min_price']),floatval($_POST['max_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
-    }
-    elseif(!empty($_POST['min_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['min_price']),'type'=>'NUMERIC','compare'=>'>='];
-    elseif(!empty($_POST['max_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['max_price']),'type'=>'NUMERIC','compare'=>'<='];
+    // ЛОГИКА ФИЛЬТРАЦИИ ТОЛЬКО ПО МАТЕРИАЛАМ (_product_price)
+    $meta_query = [];
+    
+    if(!empty($_POST['min_price']) || !empty($_POST['max_price'])){
+        $price_filter = [
+            'key'     => '_product_price', // Используем правильный ключ из метабокса
+            'type'    => 'NUMERIC',
+        ];
 
-    // price for work - цена за работу
-    if(!empty($_POST['min_work_price']) && !empty($_POST['max_work_price'])){
-        $meta_query[]=['key'=>'_product_work_price','value'=>[floatval($_POST['min_work_price']),floatval($_POST['max_work_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
-    }
-    elseif(!empty($_POST['min_work_price'])) $meta_query[]=['key'=>'_product_work_price','value'=>floatval($_POST['min_work_price']),'type'=>'NUMERIC','compare'=>'>='];
-    elseif(!empty($_POST['max_work_price'])) $meta_query[]=['key'=>'_product_work_price','value'=>floatval($_POST['max_work_price']),'type'=>'NUMERIC','compare'=>'<='];
-
-    if($meta_query) {
-        if(count($meta_query) > 1) {
-            $meta_query['relation'] = 'AND';
+        if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
+            $price_filter['value'] = [floatval($_POST['min_price']), floatval($_POST['max_price'])];
+            $price_filter['compare'] = 'BETWEEN';
+        } elseif(!empty($_POST['min_price'])) {
+            $price_filter['value'] = floatval($_POST['min_price']);
+            $price_filter['compare'] = '>=';
+        } elseif(!empty($_POST['max_price'])) {
+            $price_filter['value'] = floatval($_POST['max_price']);
+            $price_filter['compare'] = '<=';
         }
+
+        $meta_query[] = $price_filter;
+    }
+
+    if(!empty($meta_query)) {
         $args['meta_query'] = $meta_query;
     }
 
@@ -115,6 +120,56 @@ function filter_products_ajax(){
 
     wp_send_json_success(['html'=>ob_get_clean()]);
 }
+
+// function filter_products_ajax(){
+//     check_ajax_referer('filters_nonce','nonce');
+
+//     $args = ['post_type'=>'products','posts_per_page'=>12,'paged'=>$_POST['paged']??1];
+
+//     $tax_query = ['relation'=>'AND'];
+
+//     if(!empty($_POST['product_finish'])) $tax_query[] = ['taxonomy'=>'product_finish','field'=>'slug','terms'=>$_POST['product_finish']];
+//     if(!empty($_POST['product_style'])) $tax_query[] = ['taxonomy'=>'product_style','field'=>'slug','terms'=>$_POST['product_style']];
+//     if(!empty($_POST['product_brand'])) $tax_query[] = ['taxonomy'=>'product_brand','field'=>'slug','terms'=>$_POST['product_brand']];
+//     if(!empty($_POST['product_application'])) $tax_query[] = ['taxonomy'=>'product_application','field'=>'slug','terms'=>$_POST['product_application']];
+//     if(count($tax_query)>1) $args['tax_query']=$tax_query;
+
+//     // price - основная цена товара
+//     $meta_query=[];
+//     if(!empty($_POST['min_price']) && !empty($_POST['max_price'])){
+//         $meta_query[]=['key'=>'price','value'=>[floatval($_POST['min_price']),floatval($_POST['max_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
+//     }
+//     elseif(!empty($_POST['min_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['min_price']),'type'=>'NUMERIC','compare'=>'>='];
+//     elseif(!empty($_POST['max_price'])) $meta_query[]=['key'=>'price','value'=>floatval($_POST['max_price']),'type'=>'NUMERIC','compare'=>'<='];
+
+//     // price for work - цена за работу
+//     if(!empty($_POST['min_work_price']) && !empty($_POST['max_work_price'])){
+//         $meta_query[]=['key'=>'_product_work_price','value'=>[floatval($_POST['min_work_price']),floatval($_POST['max_work_price'])],'type'=>'NUMERIC','compare'=>'BETWEEN'];
+//     }
+//     elseif(!empty($_POST['min_work_price'])) $meta_query[]=['key'=>'_product_work_price','value'=>floatval($_POST['min_work_price']),'type'=>'NUMERIC','compare'=>'>='];
+//     elseif(!empty($_POST['max_work_price'])) $meta_query[]=['key'=>'_product_work_price','value'=>floatval($_POST['max_work_price']),'type'=>'NUMERIC','compare'=>'<='];
+
+//     if($meta_query) {
+//         if(count($meta_query) > 1) {
+//             $meta_query['relation'] = 'AND';
+//         }
+//         $args['meta_query'] = $meta_query;
+//     }
+
+//     $query = new WP_Query($args);
+//     ob_start();
+//     if($query->have_posts()){
+//         while($query->have_posts()){
+//             $query->the_post();
+//             get_template_part('template-parts/product','card');
+//         }
+//     } else {
+//         echo '<p>Ничего не найдено</p>';
+//     }
+//     wp_reset_postdata();
+
+//     wp_send_json_success(['html'=>ob_get_clean()]);
+// }
 
 function filter_coatings_ajax(){
     check_ajax_referer('filters_nonce','nonce');

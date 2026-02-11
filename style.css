@@ -57,7 +57,7 @@ a:hover {
     padding: 16px 0;
     position: sticky;
     top: 0;
-    z-index: 10000;
+    z-index: 999;
     width: 100%;
     flex-shrink: 0;
 }
@@ -138,8 +138,8 @@ a:hover {
     border-right: 1px solid #D8CEC4;
     overflow-y: auto;
     position: sticky;
-    top: 110px;
-    height: calc(100vh - 130px);
+    top: calc(10px + 10%);
+    height: calc(100vh - 90px);
     flex-shrink: 0;
     z-index: 1;
 }
@@ -195,23 +195,24 @@ a:hover {
     flex-direction: column;
     min-height: calc(100vh - 80px);
     overflow-y: auto;
+    background: linear-gradient(180deg, #EFE8E1 0%, #E6DDD4 100%);
 }
 
-.content-wrapper::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("assets/images/pale-wall-texture.jpg");
-    background-size: contain;
-    background-repeat: repeat;
-    filter: blur(2px);
-    z-index: 0;
-}
+/*.content-wrapper::after {*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    inset: 0;*/
+/*    background-image: url("assets/images/pale-wall-texture.jpg");*/
+/*    background-size: contain;*/
+/*    background-repeat: repeat;*/
+/*    filter: blur(2px);*/
+/*    z-index: 0;*/
+/*}*/
 
-.content-wrapper > * {
-    position: relative;
-    z-index: 1;
-}
+/*.content-wrapper > * {*/
+/*    position: relative;*/
+/*    z-index: 1;*/
+/*}*/
 
 .site-main {
     flex: 1;
@@ -328,7 +329,7 @@ a:hover {
 }
 
 .home-grid .product-image > img {
-    height: 180px;
+    height: 400px;
 }
 
 .product-card h2 {
@@ -789,31 +790,30 @@ a:hover {
     background: #f9f9f9;
     width: 100%;
     max-width: 500px;
-    height: 500px;
+    height: 600px;
     overflow: hidden;
 }
 
-#product-360-wrapper {
-    height: 800px;
+ #product-360-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    cursor: default;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+
+    touch-action: none; 
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-#product-360-trigger{
+#product-360-trigger {
     width: 100%;
     max-width: 600px;
     position: relative;
     text-align: center;
-}
-
-#product-360 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin: 0 auto;
-}
-
-#product-360.dragging {
-    cursor: grabbing;
 }
 
 #product-360 canvas, #product-360 img {
@@ -959,32 +959,55 @@ a:hover {
     to { opacity: 1; transform: scale(1); }
 }
 
+.loader-text {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.btn-360:hover {
+    opacity: 0.7;
+}
+
+.is-zoomed {
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#product-360-wrapper.is-dragging {
+    cursor: grabbing !important;
+}
+
+.modal-360.fullscreen {
+    padding: 0;
+}
+
+.modal-360.fullscreen .modal-360-content {
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+}
+
 .viewer-loader {
-    width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 15px;
 }
 
 .spinner {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     border: 4px solid rgba(0,0,0,0.1);
-    border-top-color: #000;
+    border-left-color: #0073aa;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
-}
-
-.loader-text {
-    margin-top: 12px;
-    font-size: 14px;
-    opacity: 0.7;
 }
 
 /* ===========================  CONTACTS PAGE  =========================== */
@@ -1643,6 +1666,10 @@ a:hover {
     .gallery-img {
         border-radius: 8px;
     }
+
+    .modal-360-content {
+        padding: 4px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1668,36 +1695,50 @@ a:hover {
     }
 }
 
+/* --- Основной контейнер модалки --- */
 #modal-360-viewer {
     width: 100%;
+    height: 100%;
     min-height: 600px;
-    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Важно: обрезает все, что вылезает при зуме */
 }
 
 #product-360 {
-    height: 100%;
-    cursor: zoom-in;
-    transition: transform 0.3s ease;
-}
-
-#product-360 {
-    transition: transform 0.25s ease;
-    will-change: transform;
+    /* Ваши текущие стили */
+    background-repeat: no-repeat;
     transform-origin: center center;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
     touch-action: none;
-    -webkit-user-select: none;
     user-select: none;
+    -webkit-user-select: none;
+    
+    cursor: grab; 
 }
 
-.product-360-trigger.zoomed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    max-width: unset;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(10px);
+#product-360.is-zoomed {
+    /* 1. Отключаем события мыши на картинке. 
+       Теперь библиотека 360 не узнает, что мы двигаем мышь. */
+    pointer-events: none; 
+    
+    /* 2. Курсор будет задаваться оберткой, так как элемент "прозрачен" для мыши */
 }
+
+/* Когда тащим (класс вешаем на обертку для курсора) */
+#product-360-wrapper.is-dragging {
+    cursor: grabbing;
+}
+/* --- Контроллеры (Меню) --- */
+/* .controls-360 {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+} */
 
 .controls-toggle {
     width: 44px;
