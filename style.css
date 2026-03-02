@@ -144,6 +144,9 @@ a:hover {
                     #EFE8E1 0%,
                     #E6DDD4 100%
             ); */
+    display: flex;
+    flex-direction: column;
+    align-items: center;        
     background-color: #FFFFFF;
     border-right: 1px solid #D8CEC4;
     overflow-y: auto;
@@ -268,7 +271,7 @@ a:hover {
 }
 
 .home-section {
-    padding: 24px 60px;
+    padding: 24px 80px;
     width: 100%;
 }
 

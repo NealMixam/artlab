@@ -11,4 +11,5 @@
         echo '<p>Меню в сайдбаре пока не назначено.</p>';
     }
     ?>
+    <?php get_template_part('template-parts/social-icons'); ?>
 </aside>
