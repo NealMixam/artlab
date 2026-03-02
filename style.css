@@ -14,7 +14,8 @@ html {
     scroll-behavior: smooth;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -47,13 +48,14 @@ a:hover {
 }
 
 .site-header {
-    background: linear-gradient(
+    /* background: linear-gradient(
             180deg,
             #F5EFE8 0%,
             #EEE6DC 100%
-    );
+    ); */
+    background-color: #FFFFFF;
     border-bottom: 1px solid #D8CEC4;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     padding: 16px 0;
     position: sticky;
     top: 0;
@@ -80,8 +82,13 @@ a:hover {
     display: block;
 }
 
+.site-title:hover {
+    opacity: 0.7;
+}
+
 .site-title img {
     display: block;
+    border-radius: 16px;
 }
 
 .site-contacts {
@@ -117,7 +124,9 @@ a:hover {
     }
 }
 
-.btn-phone:hover, .btn-phone:focus, .btn-phone:active {
+.btn-phone:hover,
+.btn-phone:focus,
+.btn-phone:active {
     opacity: 0.6;
 }
 
@@ -129,12 +138,13 @@ a:hover {
 
 .site-sidebar {
     width: 280px;
-    background:
+    /* background:
             linear-gradient(
                     180deg,
                     #EFE8E1 0%,
                     #E6DDD4 100%
-            );
+            ); */
+    background-color: #FFFFFF;
     border-right: 1px solid #D8CEC4;
     overflow-y: auto;
     position: sticky;
@@ -154,7 +164,8 @@ a:hover {
     margin-bottom: 10px;
 }
 
-.sidebar-menu li a::before, .mobile-menu-list li a::before {
+.sidebar-menu li a::before,
+.mobile-menu-list li a::before {
     content: "";
     position: absolute;
     left: 20px;
@@ -167,7 +178,7 @@ a:hover {
     border-left: 7px solid currentColor;
 }
 
-.sidebar-menu li + li {
+.sidebar-menu li+li {
     margin-top: 10px;
 }
 
@@ -183,7 +194,8 @@ a:hover {
     transition: all 0.3s ease;
 }
 
-.sidebar-menu a:hover, .mobile-menu-list li a:hover {
+.sidebar-menu a:hover,
+.mobile-menu-list li a:hover {
     background-color: #f2f2f2;
     color: #000;
     text-decoration: none;
@@ -195,7 +207,8 @@ a:hover {
     flex-direction: column;
     min-height: calc(100vh - 80px);
     overflow-y: auto;
-    background: linear-gradient(180deg, #EFE8E1 0%, #E6DDD4 100%);
+    /* background: linear-gradient(180deg, #EFE8E1 0%, #E6DDD4 100%); */
+    background-color: #FFFFFF;
 }
 
 /*.content-wrapper::after {*/
@@ -281,8 +294,11 @@ a:hover {
 
 .home-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-    gap: 25px;
+    /* grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 25px; */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px 30px;
+    margin-bottom: 50px;
 }
 
 .home-grid .product-card {
@@ -295,18 +311,21 @@ a:hover {
 }
 
 .product-card {
-    border: 1px solid #eee;
+    /* border: 1px solid #eee; */
+    border: 1px solid #EEEEEE;
     padding: 20px;
     text-align: center;
     transition: 0.3s;
-    background: #F3EEE7;
+    /* background: #F3EEE7; */
+    background: #F9F9F9;
     border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    /* box-shadow: 0 6px 20px rgba(0,0,0,0.04); */
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 20px;
 }
 
 .product-card:hover {
     box-shadow:
-            0 14px 36px rgba(60, 45, 30, 0.45);
+        0 14px 36px rgba(60, 45, 30, 0.45);
 }
 
 .product-image {
@@ -328,7 +347,7 @@ a:hover {
     object-fit: cover;
 }
 
-.home-grid .product-image > img {
+.home-grid .product-image>img {
     height: 400px;
 }
 
@@ -347,15 +366,16 @@ a:hover {
     margin: 0;
 }
 
-.btn-details, .btn-primary {
+.btn-details,
+.btn-primary {
     display: inline-block;
     font-weight: 500;
     font-size: 16px;
     color: #fff;
     letter-spacing: 0.5px;
     text-decoration: none !important;
-    background: #6F9FA3;
-    border: none;
+    /* background: #6F9FA3; */
+    background-color: #212121;
     border-radius: 6px;
     margin-top: 12px;
     padding: 10px 18px;
@@ -363,8 +383,10 @@ a:hover {
     box-sizing: border-box;
 }
 
-.btn-details:hover, .btn-primary:hover {
-    background-color: #5E8E92;
+.btn-details:hover,
+.btn-primary:hover {
+    /* background-color: #5E8E92; */
+    opacity: 0.6;
     color: #FFFFFF;
 }
 
@@ -399,7 +421,7 @@ a:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.4s ease;
 }
 
@@ -410,7 +432,7 @@ a:hover {
 }
 
 .about-image:hover {
-    & > img {
+    &>img {
         transform: scale(1.15);
     }
 }
@@ -435,12 +457,12 @@ a:hover {
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     transition: transform 0.4s ease, box-shadow 0.25s ease;
     text-align: center;
 
     &:hover {
-        & > img {
+        &>img {
             transform: scale(1.15);
         }
     }
@@ -587,10 +609,12 @@ a:hover {
 }
 
 .products-filters {
-    background: linear-gradient(180deg, #F2ECE6, #E8DED4);
+    /* background: linear-gradient(180deg, #F2ECE6, #E8DED4); */
+    background-color: #F9F9F9;
     padding: 20px;
+    border: 1px solid #EEEEEE;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .filters {
@@ -643,7 +667,7 @@ a:hover {
 .apply-filters,
 .reset-filters {
     display: inline-block;
-    width: 100%;    
+    width: 100%;
     padding: 10px 16px;
     border: none;
     border-radius: 6px;
@@ -652,7 +676,8 @@ a:hover {
 }
 
 .apply-filters {
-    background-color: #6F9FA3;
+    /* background-color: #6F9FA3; */
+    background-color: #212121;
     color: #fff;
     margin-bottom: 16px;
     box-shadow: 0 6px 16px rgba(111, 159, 163, 0.35);
@@ -660,7 +685,8 @@ a:hover {
 }
 
 .apply-filters:hover {
-    background-color: #5E8E92;
+    opacity: 0.7;
+    /* background-color: #5E8E92; */
     box-shadow: 0 10px 22px rgba(94, 142, 146, 0.4);
 }
 
@@ -686,7 +712,8 @@ a:hover {
     background-color: #D6CDC4;
 }
 
-.apply-filters:disabled, .reset-filters:disabled {
+.apply-filters:disabled,
+.reset-filters:disabled {
     background-color: #E0DBD5;
     color: #9A8F84;
     border-color: #D8CEC4;
@@ -794,17 +821,17 @@ a:hover {
     overflow: hidden;
 }
 
- #product-360-wrapper {
+#product-360-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
-    overflow: hidden; 
+    overflow: hidden;
     cursor: default;
-    display: flex; 
+    display: flex;
     justify-content: center;
     align-items: center;
 
-    touch-action: none; 
+    touch-action: none;
     -webkit-user-select: none;
     user-select: none;
 }
@@ -816,7 +843,8 @@ a:hover {
     text-align: center;
 }
 
-#product-360 canvas, #product-360 img {
+#product-360 canvas,
+#product-360 img {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -911,7 +939,7 @@ a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 9999;
     padding: 20px;
     opacity: 0;
@@ -933,7 +961,7 @@ a:hover {
     padding: 20px;
     max-width: 900px;
     width: 100%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .modal-360-close {
@@ -955,8 +983,15 @@ a:hover {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .loader-text {
@@ -1000,14 +1035,16 @@ a:hover {
 .spinner {
     width: 40px;
     height: 40px;
-    border: 4px solid rgba(0,0,0,0.1);
+    border: 4px solid rgba(0, 0, 0, 0.1);
     border-left-color: #0073aa;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ===========================  CONTACTS PAGE  =========================== */
@@ -1057,7 +1094,9 @@ a:hover {
 }
 
 /* ===========================  OTHER PAGES  =========================== */
-.services-page, .cooperations-page, .about-page {
+.services-page,
+.cooperations-page,
+.about-page {
     padding: 32px 20px;
 }
 
@@ -1247,6 +1286,11 @@ a:hover {
 }
 
 @media (max-width: 1100px) {
+    .home-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px; 
+    }
+    
     .single-product {
         display: flex;
         flex-direction: column;
@@ -1278,6 +1322,7 @@ a:hover {
 }
 
 @media (max-width: 1024px) {
+
     .about-inner,
     .contact-inner {
         grid-template-columns: 1fr;
@@ -1325,6 +1370,7 @@ a:hover {
 }
 
 @media (max-width: 992px) {
+
     .products-layout,
     .coatings-layout {
         grid-template-columns: 1fr;
@@ -1392,10 +1438,10 @@ a:hover {
         margin-bottom: 30px;
     }
 
-    .home-grid {
+    /* .home-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
-    }
+    } */
 
     .about-inner {
         grid-template-columns: 1fr;
@@ -1444,7 +1490,9 @@ a:hover {
         height: 300px;
     }
 
-    .services-page, .cooperations-page, .about-page {
+    .services-page,
+    .cooperations-page,
+    .about-page {
         padding: 32px 20px;
     }
 }
@@ -1574,7 +1622,7 @@ a:hover {
     align-items: start;
 }
 
-.gallery-images  > :last-child:nth-child(odd) {
+.gallery-images> :last-child:nth-child(odd) {
     grid-column: 1 / -1;
 }
 
@@ -1589,7 +1637,7 @@ a:hover {
 
 .gallery-img:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
 .gallery-img img {
@@ -1704,7 +1752,8 @@ a:hover {
     justify-content: center;
     align-items: center;
     position: relative;
-    overflow: hidden; /* Важно: обрезает все, что вылезает при зуме */
+    overflow: hidden;
+    /* Важно: обрезает все, что вылезает при зуме */
 }
 
 #product-360 {
@@ -1716,15 +1765,15 @@ a:hover {
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
-    
-    cursor: grab; 
+
+    cursor: grab;
 }
 
 #product-360.is-zoomed {
     /* 1. Отключаем события мыши на картинке. 
        Теперь библиотека 360 не узнает, что мы двигаем мышь. */
-    pointer-events: none; 
-    
+    pointer-events: none;
+
     /* 2. Курсор будет задаваться оберткой, так как элемент "прозрачен" для мыши */
 }
 
@@ -1732,6 +1781,7 @@ a:hover {
 #product-360-wrapper.is-dragging {
     cursor: grabbing;
 }
+
 /* --- Контроллеры (Меню) --- */
 /* .controls-360 {
     position: absolute;
@@ -1850,9 +1900,9 @@ button:disabled {
 
     cursor: pointer;
     transition:
-            background 0.2s ease,
-            border-color 0.2s ease,
-            transform 0.15s ease;
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
 }
 
 .controls-menu button:hover {

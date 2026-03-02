@@ -1,13 +1,15 @@
 <?php get_header(); ?>
 <div class="homepage">
     <section class="home-section">
-        <h2 class="section-title">Популярные товары</h2>
+        <h2 class="section-title">Популярные покрытия</h2>
         <div class="home-grid">
             <?php
-            $products = new WP_Query([
-                'post_type' => 'products',
-                'posts_per_page' => 8
-            ]);
+$products = new WP_Query([
+    'post_type'      => 'products',
+    'post__in'       => [548, 488, 520, 510], 
+    'orderby'        => 'post__in', 
+    'posts_per_page' => -1          
+]);
 
             if ($products->have_posts()) :
                 while ($products->have_posts()) : $products->the_post();
