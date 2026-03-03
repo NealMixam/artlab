@@ -75,8 +75,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= AUTOPLAY ================= */
 
+  // const startAutoplay = () => {
+  //   if (!modalThreeSixty || isZoomed) return;
+  //   modalThreeSixty.play();
+  //   isPlaying = true;
+  //   updatePlayButton();
+  // };
+
   const startAutoplay = () => {
-    if (!modalThreeSixty || isZoomed) return;
+    // Убрали проверку !isZoomed
+    if (!modalThreeSixty) return;
     modalThreeSixty.play();
     isPlaying = true;
     updatePlayButton();
@@ -179,9 +187,9 @@ document.addEventListener("DOMContentLoaded", () => {
     modalThreeSixty._prev = modalThreeSixty.prev;
     modalThreeSixty._play = modalThreeSixty.play;
 
-    modalThreeSixty.next = () => {};
-    modalThreeSixty.prev = () => {};
-    modalThreeSixty.play = () => {};
+    modalThreeSixty.next = () => { };
+    modalThreeSixty.prev = () => { };
+    modalThreeSixty.play = () => { };
 
     modalThreeSixty.stop();
     isPlaying = false;
@@ -203,22 +211,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= PLAY / PAUSE ================= */
 
-  const togglePlayPause = () => {
-    if (!modalThreeSixty || isZoomed) return;
+  // const togglePlayPause = () => {
+  //   if (!modalThreeSixty || isZoomed) return;
 
+  //   isPlaying ? stopAutoplay() : startAutoplay();
+  // };
+
+  const togglePlayPause = () => {
+    // Убрали проверку !isZoomed
+    if (!modalThreeSixty) return;
     isPlaying ? stopAutoplay() : startAutoplay();
   };
 
   /* ================= ROTATE ================= */
 
+  // const rotateLeft = () => {
+  //   if (!modalThreeSixty || isZoomed) return;
+  //   stopAutoplay();
+  //   modalThreeSixty.prev();
+  // };
+
+  // const rotateRight = () => {
+  //   if (!modalThreeSixty || isZoomed) return;
+  //   stopAutoplay();
+  //   modalThreeSixty.next();
+  // };
+
   const rotateLeft = () => {
-    if (!modalThreeSixty || isZoomed) return;
+    // Убрали проверку !isZoomed
+    if (!modalThreeSixty) return;
     stopAutoplay();
     modalThreeSixty.prev();
   };
 
   const rotateRight = () => {
-    if (!modalThreeSixty || isZoomed) return;
+    // Убрали проверку !isZoomed
+    if (!modalThreeSixty) return;
     stopAutoplay();
     modalThreeSixty.next();
   };
@@ -254,20 +282,44 @@ document.addEventListener("DOMContentLoaded", () => {
   //     disableRotateControls(true);
   // };
 
+  // const enableZoomMode = () => {
+  //   isZoomed = true;
+
+  //   // ОСТАНАВЛИВАЕМ вращение при входе в зум
+  //   stopAutoplay();
+
+  //   // Добавляем класс картинке
+  //   modalViewer.classList.add("is-zoomed");
+
+  //   // Меняем курсор на обертке
+  //   modalWrapper.style.cursor = "grab";
+
+  //   // Блокируем кнопки поворота (уже было в вашем коде)
+  //   disableRotateControls(true);
+  // };
+
+  // const disableZoomMode = () => {
+  //   isZoomed = false;
+  //   zoomScale = 1;
+  //   imgPosX = 0;
+  //   imgPosY = 0;
+
+  //   modalViewer.classList.remove("is-zoomed");
+  //   modalViewer.style.transform = "none";
+
+  //   modalWrapper.style.cursor = "default";
+
+  //   disableRotateControls(false);
+  // };
+
   const enableZoomMode = () => {
     isZoomed = true;
 
-    // ОСТАНАВЛИВАЕМ вращение при входе в зум
-    stopAutoplay();
+    // УДАЛИЛИ stopAutoplay() — теперь вращение продолжается при зуме
+    // УДАЛИЛИ disableRotateControls(true) — кнопки остаются активными
 
-    // Добавляем класс картинке
     modalViewer.classList.add("is-zoomed");
-
-    // Меняем курсор на обертке
     modalWrapper.style.cursor = "grab";
-
-    // Блокируем кнопки поворота (уже было в вашем коде)
-    disableRotateControls(true);
   };
 
   const disableZoomMode = () => {
@@ -278,9 +330,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modalViewer.classList.remove("is-zoomed");
     modalViewer.style.transform = "none";
-
     modalWrapper.style.cursor = "default";
 
+    // Кнопки и так активны, но для порядка оставляем false
     disableRotateControls(false);
   };
 
@@ -411,8 +463,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= CLICK ON VIEWER ================= */
 
+  // modalViewer.addEventListener("click", () => {
+  //   if (isZoomed) return;
+  //   togglePlayPause();
+  // });
+
   modalViewer.addEventListener("click", () => {
-    if (isZoomed) return;
+    // Убрали return, если isZoomed
     togglePlayPause();
   });
 
@@ -452,12 +509,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal && !isZoomed) closeModal();
   });
 
+  // document.addEventListener("keydown", (e) => {
+  //   if (!modalThreeSixty) return;
+
+  //   if (e.key === "Escape") closeModal();
+  //   if (isZoomed) return;
+
+  //   if (e.key === "ArrowLeft") rotateLeft();
+  //   if (e.key === "ArrowRight") rotateRight();
+  // });
+
   document.addEventListener("keydown", (e) => {
     if (!modalThreeSixty) return;
-
     if (e.key === "Escape") closeModal();
-    if (isZoomed) return;
 
+    // Убрали if (isZoomed) return;
     if (e.key === "ArrowLeft") rotateLeft();
     if (e.key === "ArrowRight") rotateRight();
   });

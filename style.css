@@ -211,7 +211,8 @@ a:hover {
     min-height: calc(100vh - 80px);
     overflow-y: auto;
     /* background: linear-gradient(180deg, #EFE8E1 0%, #E6DDD4 100%); */
-    background-color: #FFFFFF;
+    /* background-color: #FFFFFF; */
+    background-color: #F5F5F7;
 }
 
 /*.content-wrapper::after {*/
@@ -1775,7 +1776,7 @@ a:hover {
 #product-360.is-zoomed {
     /* 1. Отключаем события мыши на картинке. 
        Теперь библиотека 360 не узнает, что мы двигаем мышь. */
-    pointer-events: none;
+    /* pointer-events: none; */
 
     /* 2. Курсор будет задаваться оберткой, так как элемент "прозрачен" для мыши */
 }
