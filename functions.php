@@ -16,7 +16,7 @@ add_action('wp_enqueue_scripts', 'twentytwentyfive_child_enqueue_styles');
     
 function create_custom_post_types() {
     register_post_type('products', [
-        'labels'=>['name'=>'Товары','singular_name'=>'Товар'],
+        'labels'=>['name'=>'Покрытия','singular_name'=>'Покрытие'],
         'public'=>true,
         'has_archive'=>true,
         'rewrite'=>['slug'=>'products'],
@@ -24,14 +24,14 @@ function create_custom_post_types() {
         'supports'=>['title','editor','thumbnail','excerpt']
     ]);
 
-    register_post_type('coatings', [
-        'labels'=>['name'=>'Покрытия','singular_name'=>'Покрытие'],
-        'public'=>true,
-        'has_archive'=>true,
-        'rewrite'=>['slug'=>'coatings'],
-        'show_in_rest'=>true,
-        'supports'=>['title','editor','thumbnail','excerpt']
-    ]);
+    // register_post_type('coatings', [
+    //     'labels'=>['name'=>'Покрытия','singular_name'=>'Покрытие'],
+    //     'public'=>true,
+    //     'has_archive'=>true,
+    //     'rewrite'=>['slug'=>'coatings'],
+    //     'show_in_rest'=>true,
+    //     'supports'=>['title','editor','thumbnail','excerpt']
+    // ]);
 }
 
 add_action('init','create_custom_post_types');

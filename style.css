@@ -54,7 +54,10 @@ a:hover {
             #EEE6DC 100%
     ); */
     background-color: #FFFFFF;
-    border-bottom: 1px solid #D8CEC4;
+    /* background-image: url(assets/images/header-bg.png);
+    background-repeat: repeat-x;
+    background-size: contain; */
+    /* border-bottom: 1px solid #D8CEC4; */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     padding: 16px 0;
     position: sticky;
@@ -64,14 +67,28 @@ a:hover {
     flex-shrink: 0;
 }
 
+.site-header::after {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url(assets/images/header-bg.png);
+    background-repeat: repeat-x;
+    background-size: contain;
+    opacity: 0.3;
+}
+
 .header-inner {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     margin: 0 auto;
     padding: 0 40px;
-    z-index: 1;
+    z-index: 1000;
 }
 
 .site-branding {
@@ -148,7 +165,7 @@ a:hover {
     flex-direction: column;
     align-items: center;        
     background-color: #FFFFFF;
-    border-right: 1px solid #D8CEC4;
+    /* border-right: 1px solid #D8CEC4; */
     overflow-y: auto;
     position: sticky;
     top: calc(10px + 10%);

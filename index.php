@@ -40,7 +40,7 @@ $products = new WP_Query([
                 if (!empty($images)) {
                     $ids = explode(',', $images);
                     foreach ($ids as $id) {
-                        $src = wp_get_attachment_image_url($id, 'medium');
+                        $src = wp_get_attachment_image_url($id, 'full');
                         echo '<div class="about-image"><img src="' . esc_url($src) . '" alt=""></div>';
                     }
                 }
