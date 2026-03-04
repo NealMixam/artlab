@@ -15,7 +15,7 @@
     <div class="container header-inner">
         <div class="site-branding">
             <a href="<?php echo esc_url(home_url('/')); ?>" class="site-title">
-                <img src="<?php echo get_stylesheet_directory_uri() . '/assets/images/logo.png'; ?>" alt="Logo" width="200" height="70"/>
+                <img src="<?php echo get_stylesheet_directory_uri() . '/assets/images/logo.png'; ?>" alt="Logo" width="240" height="70"/>
             </a>
         </div>
         <div class="site-contacts desktop-only">
